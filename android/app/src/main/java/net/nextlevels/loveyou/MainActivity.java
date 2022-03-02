@@ -1,4 +1,4 @@
-package com.loveyou;
+package net.nextlevels.loveyou;
 
 import com.facebook.react.ReactActivity;
 
