@@ -1,4 +1,4 @@
-package com.loveyou;
+package net.nextlevels.loveyou;
 
 import android.app.Application;
 import android.content.Context;
