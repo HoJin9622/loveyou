@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.loveyou">
+  package="net.nextlevels.loveyou">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
