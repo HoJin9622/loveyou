@@ -37,6 +37,8 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>연인의 사진을 올릴 수 있게 권한을 허용해주세요</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Fonts/Pretendard-Bold.otf</string>

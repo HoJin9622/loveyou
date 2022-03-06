@@ -2,7 +2,8 @@ import React, {useLayoutEffect} from 'react';
 import styled from 'styled-components/native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {Platform} from 'react-native';
+import {ImageStore, Platform} from 'react-native';
+import {launchImageLibrary} from 'react-native-image-picker';
 import {RootStackParamList} from '@navigators/navigator';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import DismissKeyboard from '@components/DismissKeyboard';
@@ -71,12 +72,17 @@ const Enter = ({navigation}: Props) => {
   useLayoutEffect(() => {
     navigation.setOptions({headerRight});
   }, [headerRight]);
+  const choosePhoto = async () => {
+    const {assets} = await launchImageLibrary({mediaType: 'photo'});
+    if (assets && assets[0]) {
+    }
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <DismissKeyboard>
         <Container>
-          <PhotoBox>
+          <PhotoBox onPress={choosePhoto}>
             <EntypoIcon name="plus" color="#2B2B2B" size={44} />
             <PhotoExplanation>
               여기를 터치해서{'\n'}원하는 사진을 선택해주세요.
