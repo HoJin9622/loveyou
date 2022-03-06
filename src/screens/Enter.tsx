@@ -1,5 +1,6 @@
 import React, {useLayoutEffect} from 'react';
 import styled from 'styled-components/native';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {RootStackParamList} from '@navigators/navigator';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
@@ -22,25 +23,28 @@ const PhotoBox = styled.TouchableOpacity`
   background: #ffffff;
   border: 1px solid #d6d6d6;
   border-radius: 14px;
-  width: 100%;
+  width: 288px;
   height: 360px;
+  justify-content: center;
+  align-items: center;
 `;
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Enter'>;
 
 const Enter = ({navigation}: Props) => {
+  const headerRight = () => (
+    <CompleteButton>
+      <CompleteText>완료</CompleteText>
+    </CompleteButton>
+  );
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <CompleteButton>
-          <CompleteText>완료</CompleteText>
-        </CompleteButton>
-      ),
-    });
-  }, []);
+    navigation.setOptions({headerRight});
+  }, [headerRight]);
   return (
     <Container>
-      <PhotoBox></PhotoBox>
+      <PhotoBox>
+        <EntypoIcon name="plus" color="#2B2B2B" size={44} />
+      </PhotoBox>
     </Container>
   );
 };
