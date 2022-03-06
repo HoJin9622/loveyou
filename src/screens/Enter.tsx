@@ -1,11 +1,12 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect} from 'react';
 import RNFS from 'react-native-fs';
 import styled from 'styled-components/native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {Platform} from 'react-native';
-import {launchImageLibrary} from 'react-native-image-picker';
+import {useForm, Controller} from 'react-hook-form';
 import {RootStackParamList} from '@navigators/navigator';
+import {launchImageLibrary} from 'react-native-image-picker';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import DismissKeyboard from '@components/DismissKeyboard';
 import {RowLayout} from '@components/layout';
@@ -86,34 +87,58 @@ const ChangeText = styled.Text`
   color: #000;
 `;
 
+type EnterFormData = {
+  photoUri: string;
+  nickname: string;
+  birth: string;
+  firstDay: string;
+};
 type Props = NativeStackScreenProps<RootStackParamList, 'Enter'>;
 
 const Enter = ({navigation}: Props) => {
-  const [photoUri, setPhotoUri] = useState<string | undefined>();
+  const {
+    control,
+    handleSubmit,
+    formState: {isValid},
+    register,
+    setValue,
+    watch,
+  } = useForm<EnterFormData>();
+
   const headerRight = () => (
-    <CompleteButton>
+    <CompleteButton onPress={handleSubmit(onValid)}>
       <CompleteText>완료</CompleteText>
     </CompleteButton>
   );
   useLayoutEffect(() => {
     navigation.setOptions({headerRight});
   }, [headerRight]);
+  useEffect(() => {
+    register('photoUri', {required: true});
+    register('birth', {required: true});
+    register('firstDay', {required: true});
+  }, [register]);
+
   const choosePhoto = async () => {
     const {assets} = await launchImageLibrary({mediaType: 'photo'});
     if (assets && assets[0].uri) {
       const photoUri = await RNFS.readFile(assets[0].uri, 'base64');
-      setPhotoUri(`data:image/jpeg;base64,${photoUri}`);
+      setValue('photoUri', `data:image/jpeg;base64,${photoUri}`);
     }
   };
+  const onValid = (data: EnterFormData) => {
+    console.log(data);
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <DismissKeyboard>
         <Container>
           <PhotoBox onPress={choosePhoto}>
-            {photoUri ? (
+            {watch('photoUri') ? (
               <>
-                <Photo source={{uri: photoUri}} />
+                <Photo source={{uri: watch('photoUri')}} />
                 <ChangeWrapper>
                   <ChangeButton>
                     <ChangeText>변경하기</ChangeText>
@@ -129,11 +154,21 @@ const Enter = ({navigation}: Props) => {
               </>
             )}
           </PhotoBox>
-          <NicknameInput
-            placeholder="이름 or 애칭"
-            placeholderTextColor="#fff"
-            autoCapitalize="none"
-            autoCorrect={false}
+          <Controller
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (
+              <NicknameInput
+                placeholder="이름 or 애칭"
+                placeholderTextColor="#fff"
+                autoCapitalize="none"
+                autoCorrect={false}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
+            name="nickname"
           />
           <RowLayout>
             <FontAwesome5Icon name="calendar" color="#fff" />
