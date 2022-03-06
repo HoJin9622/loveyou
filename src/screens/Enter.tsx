@@ -3,12 +3,13 @@ import RNFS from 'react-native-fs';
 import styled from 'styled-components/native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import {format} from 'date-fns';
 import {Platform} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {RootStackParamList} from '@navigators/navigator';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import BirthModal from '@components/modal/BirthModal';
+import DateModal from '@components/modal/DateModal';
 import DismissKeyboard from '@components/DismissKeyboard';
 import {RowLayout, TouchableRow} from '@components/layout';
 
@@ -23,10 +24,11 @@ const Container = styled.View`
   padding: 0 43.5px;
 `;
 const CompleteButton = styled.TouchableOpacity``;
-const CompleteText = styled.Text`
-  font-family: 'Pretendard-Regular';
+const CompleteText = styled.Text<{active: boolean}>`
+  font-family: ${props =>
+    props.active ? 'Pretendard-Bold' : 'Pretendard-Regular'};
   color: #fff;
-  opacity: 0.5;
+  opacity: ${props => (props.active ? 1 : 0.5)};
   font-size: 16px;
   line-height: 19px;
 `;
@@ -60,6 +62,7 @@ const NicknameInput = styled.TextInput`
   line-height: 38px;
   color: #fff;
   margin: 32px 0 24px;
+  text-align: center;
 `;
 const DateText = styled.Text<{mr?: number}>`
   font-family: 'Pretendard-Regular';
@@ -107,10 +110,11 @@ const Enter = ({navigation}: Props) => {
     watch,
   } = useForm<EnterFormData>();
   const [birthModalVisible, setBirthModalVisible] = useState(false);
+  const [firstDayModalVisible, setFirstDayModalVisible] = useState(false);
 
   const headerRight = () => (
     <CompleteButton onPress={handleSubmit(onValid)}>
-      <CompleteText>완료</CompleteText>
+      <CompleteText active={isValid}>완료</CompleteText>
     </CompleteButton>
   );
   useLayoutEffect(() => {
@@ -123,16 +127,17 @@ const Enter = ({navigation}: Props) => {
   }, [register]);
 
   const toggleBirthModal = () => setBirthModalVisible(prev => !prev);
+  const toggleFirstDayModal = () => setFirstDayModalVisible(prev => !prev);
   const choosePhoto = async () => {
     const {assets} = await launchImageLibrary({mediaType: 'photo'});
     if (assets && assets[0].uri) {
       const photoUri = await RNFS.readFile(assets[0].uri, 'base64');
-      setValue('photoUri', `data:image/jpeg;base64,${photoUri}`);
+      setValue('photoUri', `data:image/jpeg;base64,${photoUri}`, {
+        shouldValidate: true,
+      });
     }
   };
-  const onValid = (data: EnterFormData) => {
-    console.log(data);
-  };
+  const onValid = (data: EnterFormData) => {};
 
   return (
     <KeyboardAvoidingView
@@ -177,15 +182,32 @@ const Enter = ({navigation}: Props) => {
           <RowLayout>
             <TouchableRow onPress={toggleBirthModal}>
               <FontAwesome5Icon name="calendar" color="#fff" />
-              <DateText mr={24}>{watch('birth') || '생일'}</DateText>
+              <DateText mr={24}>
+                {watch('birth')
+                  ? format(new Date(watch('birth')), 'yyyy-MM-dd')
+                  : '생일'}
+              </DateText>
             </TouchableRow>
-            <FontAwesome5Icon name="calendar" color="#fff" />
-            <DateText>사귀기 시작한 날</DateText>
+            <TouchableRow onPress={toggleFirstDayModal}>
+              <FontAwesome5Icon name="calendar" color="#fff" />
+              <DateText>
+                {watch('firstDay')
+                  ? format(new Date(watch('firstDay')), 'yyyy-MM-dd')
+                  : '사귀기 시작한 날'}
+              </DateText>
+            </TouchableRow>
           </RowLayout>
-          <BirthModal
-            toggleBirthModal={toggleBirthModal}
+          <DateModal
+            toggleDateModal={toggleBirthModal}
             isVisible={birthModalVisible}
             setValue={setValue}
+            name="birth"
+          />
+          <DateModal
+            toggleDateModal={toggleFirstDayModal}
+            isVisible={firstDayModalVisible}
+            setValue={setValue}
+            name="firstDay"
           />
         </Container>
       </DismissKeyboard>
