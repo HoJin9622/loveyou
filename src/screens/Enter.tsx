@@ -30,17 +30,18 @@ const CompleteText = styled.Text`
   line-height: 19px;
 `;
 const PhotoBox = styled.TouchableOpacity`
+  margin-top: -80px;
   background: #ffffff;
   border: 1px solid #d6d6d6;
   border-radius: 14px;
   width: 288px;
-  height: 360px;
+  height: 400px;
   justify-content: center;
   align-items: center;
 `;
 const Photo = styled.Image`
   width: 288px;
-  height: 360px;
+  height: 400px;
   border-radius: 14px;
 `;
 const PhotoExplanation = styled.Text`

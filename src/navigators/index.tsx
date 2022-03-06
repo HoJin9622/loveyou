@@ -11,7 +11,11 @@ const RootStack = () => {
       <Stack.Screen
         name="Enter"
         component={Enter}
-        options={{title: '', headerStyle: {backgroundColor: '#121212'}}}
+        options={{
+          title: '',
+          headerStyle: {backgroundColor: '#121212'},
+          headerShadowVisible: false,
+        }}
       />
     </Stack.Navigator>
   );
