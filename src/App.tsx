@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Config from 'react-native-config';
+import SplashScreen from 'react-native-splash-screen';
 import * as Sentry from '@sentry/react-native';
-import {SafeAreaView} from 'react-native';
-import Hi from '@components/Hi';
+import {NavigationContainer} from '@react-navigation/native';
+import RootStack from './navigators';
 
 Sentry.init({
   dsn: Config.SENTRY_DSN,
@@ -12,10 +13,13 @@ Sentry.init({
 });
 
 const App = () => {
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
   return (
-    <SafeAreaView>
-      <Hi></Hi>
-    </SafeAreaView>
+    <NavigationContainer>
+      <RootStack />
+    </NavigationContainer>
   );
 };
 
