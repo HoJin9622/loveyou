@@ -1,8 +1,9 @@
-import React, {useLayoutEffect} from 'react';
+import React, {useLayoutEffect, useState} from 'react';
+import RNFS from 'react-native-fs';
 import styled from 'styled-components/native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-import {ImageStore, Platform} from 'react-native';
+import {Platform} from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {RootStackParamList} from '@navigators/navigator';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -36,6 +37,11 @@ const PhotoBox = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
 `;
+const Photo = styled.Image`
+  width: 288px;
+  height: 360px;
+  border-radius: 14px;
+`;
 const PhotoExplanation = styled.Text`
   font-family: 'Pretendard-Regular';
   font-size: 16px;
@@ -60,10 +66,30 @@ const DateText = styled.Text<{mr?: number}>`
   margin-left: 8px;
   margin-right: ${props => props.mr || 0}px;
 `;
+const ChangeWrapper = styled.View`
+  position: absolute;
+  z-index: 5;
+  bottom: 16px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;
+const ChangeButton = styled.View`
+  padding: 8px 12px 7px;
+  background: #ffffff;
+  border-radius: 37px;
+`;
+const ChangeText = styled.Text`
+  font-family: 'Pretendard-Regular';
+  font-size: 16px;
+  line-height: 19px;
+  color: #000;
+`;
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Enter'>;
 
 const Enter = ({navigation}: Props) => {
+  const [photoUri, setPhotoUri] = useState<string | undefined>();
   const headerRight = () => (
     <CompleteButton>
       <CompleteText>완료</CompleteText>
@@ -74,7 +100,9 @@ const Enter = ({navigation}: Props) => {
   }, [headerRight]);
   const choosePhoto = async () => {
     const {assets} = await launchImageLibrary({mediaType: 'photo'});
-    if (assets && assets[0]) {
+    if (assets && assets[0].uri) {
+      const photoUri = await RNFS.readFile(assets[0].uri, 'base64');
+      setPhotoUri(`data:image/jpeg;base64,${photoUri}`);
     }
   };
   return (
@@ -83,10 +111,23 @@ const Enter = ({navigation}: Props) => {
       <DismissKeyboard>
         <Container>
           <PhotoBox onPress={choosePhoto}>
-            <EntypoIcon name="plus" color="#2B2B2B" size={44} />
-            <PhotoExplanation>
-              여기를 터치해서{'\n'}원하는 사진을 선택해주세요.
-            </PhotoExplanation>
+            {photoUri ? (
+              <>
+                <Photo source={{uri: photoUri}} />
+                <ChangeWrapper>
+                  <ChangeButton>
+                    <ChangeText>변경하기</ChangeText>
+                  </ChangeButton>
+                </ChangeWrapper>
+              </>
+            ) : (
+              <>
+                <EntypoIcon name="plus" color="#2B2B2B" size={44} />
+                <PhotoExplanation>
+                  여기를 터치해서{'\n'}원하는 사진을 선택해주세요.
+                </PhotoExplanation>
+              </>
+            )}
           </PhotoBox>
           <NicknameInput
             placeholder="이름 or 애칭"
