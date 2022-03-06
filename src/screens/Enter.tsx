@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import RNFS from 'react-native-fs';
 import styled from 'styled-components/native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
@@ -8,8 +8,9 @@ import {useForm, Controller} from 'react-hook-form';
 import {RootStackParamList} from '@navigators/navigator';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import BirthModal from '@components/modal/BirthModal';
 import DismissKeyboard from '@components/DismissKeyboard';
-import {RowLayout} from '@components/layout';
+import {RowLayout, TouchableRow} from '@components/layout';
 
 const KeyboardAvoidingView = styled.KeyboardAvoidingView`
   flex: 1;
@@ -88,7 +89,7 @@ const ChangeText = styled.Text`
   color: #000;
 `;
 
-type EnterFormData = {
+export type EnterFormData = {
   photoUri: string;
   nickname: string;
   birth: string;
@@ -105,6 +106,7 @@ const Enter = ({navigation}: Props) => {
     setValue,
     watch,
   } = useForm<EnterFormData>();
+  const [birthModalVisible, setBirthModalVisible] = useState(false);
 
   const headerRight = () => (
     <CompleteButton onPress={handleSubmit(onValid)}>
@@ -120,6 +122,7 @@ const Enter = ({navigation}: Props) => {
     register('firstDay', {required: true});
   }, [register]);
 
+  const toggleBirthModal = () => setBirthModalVisible(prev => !prev);
   const choosePhoto = async () => {
     const {assets} = await launchImageLibrary({mediaType: 'photo'});
     if (assets && assets[0].uri) {
@@ -172,11 +175,18 @@ const Enter = ({navigation}: Props) => {
             name="nickname"
           />
           <RowLayout>
-            <FontAwesome5Icon name="calendar" color="#fff" />
-            <DateText mr={24}>생일</DateText>
+            <TouchableRow onPress={toggleBirthModal}>
+              <FontAwesome5Icon name="calendar" color="#fff" />
+              <DateText mr={24}>{watch('birth') || '생일'}</DateText>
+            </TouchableRow>
             <FontAwesome5Icon name="calendar" color="#fff" />
             <DateText>사귀기 시작한 날</DateText>
           </RowLayout>
+          <BirthModal
+            toggleBirthModal={toggleBirthModal}
+            isVisible={birthModalVisible}
+            setValue={setValue}
+          />
         </Container>
       </DismissKeyboard>
     </KeyboardAvoidingView>
