@@ -4,11 +4,12 @@ import styled from 'styled-components/native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {format} from 'date-fns';
-import {Platform} from 'react-native';
+import {ActivityIndicator, Platform} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {RootStackParamList} from '@navigators/navigator';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {useAsyncStorage} from '@react-native-async-storage/async-storage';
 import DateModal from '@components/modal/DateModal';
 import DismissKeyboard from '@components/DismissKeyboard';
 import {RowLayout, TouchableRow} from '@components/layout';
@@ -109,14 +110,19 @@ const Enter = ({navigation}: Props) => {
     setValue,
     watch,
   } = useForm<EnterFormData>();
+  const {setItem} = useAsyncStorage('profile');
   const [birthModalVisible, setBirthModalVisible] = useState(false);
   const [firstDayModalVisible, setFirstDayModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const headerRight = () => (
-    <CompleteButton onPress={handleSubmit(onValid)}>
-      <CompleteText active={isValid}>완료</CompleteText>
-    </CompleteButton>
-  );
+  const headerRight = () =>
+    loading ? (
+      <ActivityIndicator />
+    ) : (
+      <CompleteButton onPress={handleSubmit(onValid)}>
+        <CompleteText active={isValid}>완료</CompleteText>
+      </CompleteButton>
+    );
   useLayoutEffect(() => {
     navigation.setOptions({headerRight});
   }, [headerRight]);
@@ -137,7 +143,11 @@ const Enter = ({navigation}: Props) => {
       });
     }
   };
-  const onValid = (data: EnterFormData) => {};
+  const onValid = async (data: EnterFormData) => {
+    setLoading(prev => !prev);
+    await setItem(JSON.stringify(data));
+    setLoading(prev => !prev);
+  };
 
   return (
     <KeyboardAvoidingView
