@@ -147,6 +147,7 @@ const Enter = ({navigation}: Props) => {
     setLoading(prev => !prev);
     await setItem(JSON.stringify(data));
     setLoading(prev => !prev);
+    navigation.replace('Home');
   };
 
   return (
