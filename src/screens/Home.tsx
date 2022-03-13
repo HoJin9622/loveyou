@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import styled from 'styled-components/native';
 import differenceInDays from 'date-fns/differenceInDays';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import {BlurView} from '@react-native-community/blur';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useAsyncStorage} from '@react-native-async-storage/async-storage';
@@ -61,6 +62,13 @@ const AnniversaryNameText = styled.Text`
   line-height: 14px;
   color: #fff;
 `;
+const Blur = styled(BlurView)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`;
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -84,6 +92,7 @@ const Home = ({navigation}: Props) => {
   return !profile ? null : (
     <Background source={{uri: profile?.photoUri}}>
       <Card bottomInset={bottom} onPress={goToAnniversary}>
+        <Blur blurType="extraDark" reducedTransparencyFallbackColor="white" />
         <Name>{profile?.nickname}</Name>
         <TotalDayText>
           in love{' '}

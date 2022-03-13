@@ -45,10 +45,7 @@ const RootStack = () => {
       <Stack.Screen
         name="Anniversary"
         component={Anniversary}
-        options={{
-          // headerShown: false,
-          presentation: 'modal',
-        }}
+        options={{headerShown: false, presentation: 'transparentModal'}}
       />
     </Stack.Navigator>
   );
