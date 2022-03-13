@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
+import {ActivityIndicator} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useAsyncStorage} from '@react-native-async-storage/async-storage';
 import Enter from '@screens/Enter';
 import Home from '@screens/Home';
 import {RootStackParamList} from './navigator';
-import {ActivityIndicator} from 'react-native';
+import Anniversary from '@screens/Anniversary';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -40,6 +41,14 @@ const RootStack = () => {
         name="Home"
         component={Home}
         options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Anniversary"
+        component={Anniversary}
+        options={{
+          // headerShown: false,
+          presentation: 'modal',
+        }}
       />
     </Stack.Navigator>
   );

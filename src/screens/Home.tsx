@@ -1,15 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components/native';
+import differenceInDays from 'date-fns/differenceInDays';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useAsyncStorage} from '@react-native-async-storage/async-storage';
 import {EnterFormData} from './Enter';
 import {RowLayout} from '@components/layout';
+import {RootStackParamList} from '@navigators/navigator';
 
 const Background = styled.ImageBackground`
   flex: 1;
 `;
-const Card = styled.View<{bottomInset: number}>`
+const Card = styled.TouchableOpacity<{bottomInset: number}>`
   width: 100%;
   padding: 24px 20px ${props => props.bottomInset + 24}px;
   position: absolute;
@@ -59,7 +62,9 @@ const AnniversaryNameText = styled.Text`
   color: #fff;
 `;
 
-const Home = () => {
+type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
+
+const Home = ({navigation}: Props) => {
   const now = new Date();
   const {bottom} = useSafeAreaInsets();
   const [profile, setProfile] = useState<EnterFormData | null>(null);
@@ -75,12 +80,17 @@ const Home = () => {
     const profile: EnterFormData = JSON.parse(item);
     setProfile(profile);
   };
-  return (
+  const goToAnniversary = () => navigation.navigate('Anniversary');
+  return !profile ? null : (
     <Background source={{uri: profile?.photoUri}}>
-      <Card bottomInset={bottom}>
+      <Card bottomInset={bottom} onPress={goToAnniversary}>
         <Name>{profile?.nickname}</Name>
         <TotalDayText>
-          in love <TotalDayAccentText>185</TotalDayAccentText> days
+          in love{' '}
+          <TotalDayAccentText>
+            {differenceInDays(now, new Date(profile.firstDay)) + 1}
+          </TotalDayAccentText>{' '}
+          days
         </TotalDayText>
         <RowLayout>
           <AnniversaryCountBox>
