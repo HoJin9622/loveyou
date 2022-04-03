@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import styled from 'styled-components/native';
 import differenceInDays from 'date-fns/differenceInDays';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
@@ -78,16 +78,17 @@ const Home = ({navigation}: Props) => {
   const [profile, setProfile] = useState<EnterFormData | null>(null);
   const {getItem} = useAsyncStorage('profile');
 
-  useEffect(() => {
-    readItemFromStorage();
-  }, []);
-
-  const readItemFromStorage = async () => {
+  const readItemFromStorage = useCallback(async () => {
     const item = await getItem();
     if (!item) return;
-    const profile: EnterFormData = JSON.parse(item);
-    setProfile(profile);
-  };
+    const loadedProfile: EnterFormData = JSON.parse(item);
+    setProfile(loadedProfile);
+  }, [getItem]);
+
+  useEffect(() => {
+    readItemFromStorage();
+  }, [readItemFromStorage]);
+
   const goToAnniversary = () => navigation.navigate('Anniversary');
   return !profile ? null : (
     <Background source={{uri: profile?.photoUri}}>

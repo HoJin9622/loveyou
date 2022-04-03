@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import RNFS from 'react-native-fs';
 import styled from 'styled-components/native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
@@ -115,17 +115,30 @@ const Enter = ({navigation}: Props) => {
   const [firstDayModalVisible, setFirstDayModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const headerRight = () =>
-    loading ? (
-      <ActivityIndicator />
-    ) : (
-      <CompleteButton onPress={handleSubmit(onValid)}>
-        <CompleteText active={isValid}>완료</CompleteText>
-      </CompleteButton>
-    );
+  const onValid = useCallback(
+    async (data: EnterFormData) => {
+      setLoading(prev => !prev);
+      await setItem(JSON.stringify(data));
+      setLoading(prev => !prev);
+      navigation.replace('Home');
+    },
+    [navigation, setItem],
+  );
+
+  const headerRight = useCallback(
+    () =>
+      loading ? (
+        <ActivityIndicator />
+      ) : (
+        <CompleteButton onPress={handleSubmit(onValid)}>
+          <CompleteText active={isValid}>완료</CompleteText>
+        </CompleteButton>
+      ),
+    [handleSubmit, isValid, loading, onValid],
+  );
   useLayoutEffect(() => {
     navigation.setOptions({headerRight});
-  }, [headerRight]);
+  }, [headerRight, navigation]);
   useEffect(() => {
     register('photoUri', {required: true});
     register('birth', {required: true});
@@ -142,12 +155,6 @@ const Enter = ({navigation}: Props) => {
         shouldValidate: true,
       });
     }
-  };
-  const onValid = async (data: EnterFormData) => {
-    setLoading(prev => !prev);
-    await setItem(JSON.stringify(data));
-    setLoading(prev => !prev);
-    navigation.replace('Home');
   };
 
   return (

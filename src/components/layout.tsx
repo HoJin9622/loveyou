@@ -8,3 +8,6 @@ export const TouchableRow = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
 `;
+export const BetweenLayout = styled(RowLayout)`
+  justify-content: space-between;
+`;
