@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import styled from 'styled-components/native';
 import AntIcon from 'react-native-vector-icons/AntDesign';
-import add from 'date-fns/add';
+import differenceInDays from 'date-fns/differenceInDays';
 import format from 'date-fns/format';
 import {FlatList, ListRenderItem} from 'react-native';
 import {BlurView} from '@react-native-community/blur';
@@ -10,10 +10,9 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useAsyncStorage} from '@react-native-async-storage/async-storage';
 import {RootStackParamList} from '@navigators/navigator';
 import {BetweenLayout} from '@components/layout';
-import {EnterFormData} from './Enter';
 
-const Container = styled.View`
-  padding: 0 20px;
+const Container = styled.View<{topInset: number}>`
+  padding: ${props => props.topInset}px 20px 0;
   flex: 1;
 `;
 const CloseButton = styled.TouchableOpacity<{topInset: number}>`
@@ -37,79 +36,73 @@ const Blur = styled(BlurView)`
 const AnniversaryBox = styled.View`
   margin-bottom: 24px;
 `;
-const RemnantText = styled.Text`
+const RemnantText = styled.Text<{active: boolean}>`
   font-family: 'Pretendard-Bold';
   font-size: 18px;
   line-height: 22px;
-  color: #fff;
+  color: ${props => (props.active ? '#fff' : '#8a8d93')};
 `;
-const DateText = styled.Text`
+const DateText = styled.Text<{active: boolean}>`
   font-family: 'Pretendard-Medium';
   font-size: 14px;
   line-height: 17px;
-  color: #fff;
+  color: ${props => (props.active ? '#fff' : '#8a8d93')};
   margin-top: 4px;
 `;
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Anniversary'>;
 interface IAnniversary {
   type: 'birthday' | 'anniversary';
-  date: Date;
+  date: string;
+  text: string;
 }
 
 const Anniversary = ({navigation}: Props) => {
   const today = useMemo(() => new Date(), []);
   const {top} = useSafeAreaInsets();
-  const [profile, setProfile] = useState<EnterFormData | null>(null);
+  const {getItem: getAnniversary} = useAsyncStorage('anniversary');
   const [anniversaries, setAnniversaries] = useState<IAnniversary[]>([]);
-  const {getItem} = useAsyncStorage('profile');
 
-  const getAnniversary = useCallback(() => {
-    if (!profile) return;
-    const thisYear = today.getFullYear();
-    const birthday = new Date(new Date(profile.birth));
-    const birthdayMonth = birthday.getMonth() + 1;
-    const birthDayDay = birthday.getDate();
-    const thisBirthday = new Date(
-      `${thisYear}-${birthdayMonth}-${birthDayDay}`,
-    );
-    const onCommingBirthday = add(thisBirthday, {years: 1});
-    setAnniversaries([
-      ...anniversaries,
-      {type: 'birthday', date: onCommingBirthday},
-    ]);
-  }, [anniversaries, profile, today]);
-  const renderItemFromStorage = useCallback(async () => {
-    const item = await getItem();
-    if (!item) return;
-    const loadedProfile: EnterFormData = JSON.parse(item);
-    setProfile(loadedProfile);
-    getAnniversary();
-  }, [getAnniversary, getItem]);
+  const renderItemFromStorage = async () => {
+    const loadedAnniversary = await getAnniversary();
+    if (!loadedAnniversary) return;
+    const items: IAnniversary[] = JSON.parse(loadedAnniversary);
+    setAnniversaries(items);
+  };
   useEffect(() => {
     renderItemFromStorage();
-  }, [renderItemFromStorage]);
+  });
   const goBack = () => navigation.goBack();
+  const isDayBefore = (date: string) => {
+    return getDayDistance(date) > 0;
+  };
+  const getDayDistance = (date: string) => {
+    return differenceInDays(new Date(date), today) + 1;
+  };
 
   const renderItem: ListRenderItem<IAnniversary> | null | undefined = ({
     item: anniversary,
   }) => (
     <AnniversaryBox>
       <BetweenLayout>
-        <RemnantText>
-          {anniversary.type === 'birthday'
-            ? '26th birthday'
-            : '300-day anniversary'}
+        <RemnantText active={isDayBefore(anniversary.date)}>
+          {anniversary.text}
         </RemnantText>
-        <RemnantText>D - 25</RemnantText>
+        <RemnantText active={isDayBefore(anniversary.date)}>
+          D {isDayBefore(anniversary.date) ? '-' : '+'}{' '}
+          {Math.abs(getDayDistance(anniversary.date))}
+        </RemnantText>
       </BetweenLayout>
-      <DateText>{format(anniversary.date, 'yyyy-MM-dd')}</DateText>
+      <DateText active={isDayBefore(anniversary.date)}>
+        {format(new Date(anniversary.date), 'yyyy-MM-dd')}
+      </DateText>
     </AnniversaryBox>
   );
   return (
-    <Container>
+    <Container topInset={top}>
       <Blur blurType="extraDark" reducedTransparencyFallbackColor="white" />
       <FlatList
+        showsVerticalScrollIndicator={false}
         data={anniversaries}
         renderItem={renderItem}
         keyExtractor={(_, index) => index + ''}

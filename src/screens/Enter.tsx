@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
+import add from 'date-fns/add';
 import RNFS from 'react-native-fs';
 import styled from 'styled-components/native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
@@ -99,6 +100,11 @@ export type EnterFormData = {
   birth: string;
   firstDay: string;
 };
+export interface IAnniversary {
+  type: 'birthday' | 'anniversary';
+  date: Date;
+  text: string;
+}
 type Props = NativeStackScreenProps<RootStackParamList, 'Enter'>;
 
 const Enter = ({navigation}: Props) => {
@@ -109,20 +115,84 @@ const Enter = ({navigation}: Props) => {
     register,
     setValue,
     watch,
+    getValues,
   } = useForm<EnterFormData>();
   const {setItem} = useAsyncStorage('profile');
+  const {setItem: setAnniversary} = useAsyncStorage('anniversary');
   const [birthModalVisible, setBirthModalVisible] = useState(false);
   const [firstDayModalVisible, setFirstDayModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const calculateAnniversaries = useCallback(() => {
+    const {birth, firstDay} = getValues();
+    const tempAnniversary: IAnniversary[] = [];
+    const tempBirthday: IAnniversary[] = [];
+    const tempYearAnniversary: IAnniversary[] = [];
+    for (let i = 0; i < 15; i++) {
+      tempAnniversary.push({
+        date: add(new Date(firstDay), {days: i * 100 + 99}),
+        type: 'anniversary',
+        text: `${i + 1}00-day anniversary`,
+      });
+    }
+    for (let j = 0; j < 50; j++) {
+      tempBirthday.push({
+        date: add(new Date(birth), {years: j + 3}),
+        type: 'birthday',
+        text: `${j + 3}th birthday`,
+      });
+    }
+    for (let k = 0; k < 5; k++) {
+      tempYearAnniversary.push({
+        date: add(new Date(firstDay), {years: k + 3}),
+        type: 'anniversary',
+        text: `${k + 3}th anniversary`,
+      });
+    }
+    setAnniversary(
+      JSON.stringify(
+        [
+          ...tempAnniversary,
+          ...tempBirthday,
+          ...tempYearAnniversary,
+          {
+            date: add(new Date(firstDay), {days: 49}),
+            type: 'anniversary',
+            text: '50-day anniversary',
+          },
+          {
+            date: add(new Date(birth), {years: 1}),
+            type: 'anniversary',
+            text: '1st birthday',
+          },
+          {
+            date: add(new Date(birth), {years: 2}),
+            type: 'anniversary',
+            text: '2nd birthday',
+          },
+          {
+            date: add(new Date(firstDay), {years: 1}),
+            type: 'anniversary',
+            text: '1st anniversary',
+          },
+          {
+            date: add(new Date(firstDay), {years: 2}),
+            type: 'anniversary',
+            text: '2nd anniversary',
+          },
+        ].sort((a, b) => +a.date - +b.date),
+      ),
+    );
+  }, [getValues, setAnniversary]);
   const onValid = useCallback(
     async (data: EnterFormData) => {
       setLoading(prev => !prev);
       await setItem(JSON.stringify(data));
+      calculateAnniversaries();
       setLoading(prev => !prev);
       navigation.replace('Home');
     },
-    [navigation, setItem],
+    [navigation, setItem, calculateAnniversaries],
   );
 
   const headerRight = useCallback(
