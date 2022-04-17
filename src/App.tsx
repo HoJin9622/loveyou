@@ -7,9 +7,7 @@ import RootStack from './navigators';
 
 Sentry.init({
   dsn: Config.SENTRY_DSN,
-  integrations: [
-    new Sentry.ReactNativeTracing({tracingOrigins: ['localhost', /^\//]}),
-  ],
+  environment: __DEV__ ? 'development' : 'production',
 });
 
 const App = () => {
