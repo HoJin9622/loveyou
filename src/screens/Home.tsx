@@ -1,7 +1,9 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import styled from 'styled-components/native';
+import Config from 'react-native-config';
 import differenceInDays from 'date-fns/differenceInDays';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import {Platform} from 'react-native';
 import {BlurView} from '@react-native-community/blur';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -9,6 +11,7 @@ import {useAsyncStorage} from '@react-native-async-storage/async-storage';
 import {EnterFormData} from './Enter';
 import {RowLayout} from '@components/layout';
 import {RootStackParamList} from '@navigators/navigator';
+import {TestIds, useInterstitialAd} from '@react-native-admob/admob';
 
 const Background = styled.ImageBackground`
   flex: 1;
@@ -74,9 +77,21 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const Home = ({navigation}: Props) => {
   const now = new Date();
+  const admobId = __DEV__
+    ? TestIds.INTERSTITIAL
+    : Platform.OS === 'android'
+    ? Config.ADMOB_ANDROID
+    : Config.ADMOB_IOS;
   const {bottom} = useSafeAreaInsets();
+  const {adLoaded, adDismissed, show} = useInterstitialAd(admobId);
   const [profile, setProfile] = useState<EnterFormData | null>(null);
   const {getItem} = useAsyncStorage('profile');
+
+  useEffect(() => {
+    if (adDismissed) {
+      navigation.navigate('Anniversary');
+    }
+  }, [adDismissed, navigation]);
 
   const readItemFromStorage = useCallback(async () => {
     const item = await getItem();
@@ -89,7 +104,14 @@ const Home = ({navigation}: Props) => {
     readItemFromStorage();
   }, [readItemFromStorage]);
 
-  const goToAnniversary = () => navigation.navigate('Anniversary');
+  const goToAnniversary = () => {
+    if (adLoaded) {
+      show();
+    } else {
+      navigation.navigate('Anniversary');
+    }
+  };
+
   return !profile ? null : (
     <Background source={{uri: profile?.photoUri}}>
       <Card bottomInset={bottom} onPress={goToAnniversary}>

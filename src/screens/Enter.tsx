@@ -135,13 +135,13 @@ const Enter = ({navigation}: Props) => {
         text: `${i + 1}00-day anniversary`,
       });
     }
-    for (let j = 0; j < 50; j++) {
-      tempBirthday.push({
-        date: add(new Date(birth), {years: j + 3}),
-        type: 'birthday',
-        text: `${j + 3}th birthday`,
-      });
-    }
+    // for (let j = 0; j < 50; j++) {
+    //   tempBirthday.push({
+    //     date: add(new Date(birth), {years: j + 3}),
+    //     type: 'birthday',
+    //     text: `${j + 3}th birthday`,
+    //   });
+    // }
     for (let k = 0; k < 5; k++) {
       tempYearAnniversary.push({
         date: add(new Date(firstDay), {years: k + 3}),
@@ -153,23 +153,23 @@ const Enter = ({navigation}: Props) => {
       JSON.stringify(
         [
           ...tempAnniversary,
-          ...tempBirthday,
+          // ...tempBirthday,
           ...tempYearAnniversary,
           {
             date: add(new Date(firstDay), {days: 49}),
             type: 'anniversary',
             text: '50-day anniversary',
           },
-          {
-            date: add(new Date(birth), {years: 1}),
-            type: 'anniversary',
-            text: '1st birthday',
-          },
-          {
-            date: add(new Date(birth), {years: 2}),
-            type: 'anniversary',
-            text: '2nd birthday',
-          },
+          // {
+          //   date: add(new Date(birth), {years: 1}),
+          //   type: 'anniversary',
+          //   text: '1st birthday',
+          // },
+          // {
+          //   date: add(new Date(birth), {years: 2}),
+          //   type: 'anniversary',
+          //   text: '2nd birthday',
+          // },
           {
             date: add(new Date(firstDay), {years: 1}),
             type: 'anniversary',
