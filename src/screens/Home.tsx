@@ -116,6 +116,10 @@ const Home = ({navigation}: Props) => {
   }, []);
 
   const goToAnniversary = () => {
+    if (adDismissed) {
+      navigation.navigate('Anniversary');
+      return;
+    }
     if (adLoaded) {
       show();
     } else {
