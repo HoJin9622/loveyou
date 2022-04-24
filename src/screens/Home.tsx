@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import styled from 'styled-components/native';
 import Config from 'react-native-config';
 import differenceInDays from 'date-fns/differenceInDays';
@@ -8,10 +8,11 @@ import {BlurView} from '@react-native-community/blur';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useAsyncStorage} from '@react-native-async-storage/async-storage';
-import {EnterFormData} from './Enter';
+import {EnterFormData, IAnniversary} from './Enter';
 import {RowLayout} from '@components/layout';
 import {RootStackParamList} from '@navigators/navigator';
 import {TestIds, useInterstitialAd} from '@react-native-admob/admob';
+import {format} from 'date-fns';
 
 const Background = styled.ImageBackground`
   flex: 1;
@@ -76,6 +77,7 @@ const Blur = styled(BlurView)`
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const Home = ({navigation}: Props) => {
+  const today = useMemo(() => new Date(), []);
   const now = new Date();
   const admobId = __DEV__
     ? TestIds.INTERSTITIAL
@@ -86,6 +88,8 @@ const Home = ({navigation}: Props) => {
   const {adLoaded, adDismissed, show} = useInterstitialAd(admobId);
   const [profile, setProfile] = useState<EnterFormData | null>(null);
   const {getItem} = useAsyncStorage('profile');
+  const {getItem: getAnniversary} = useAsyncStorage('anniversary');
+  const [anniversaries, setAnniversaries] = useState<IAnniversary[]>([]);
 
   useEffect(() => {
     if (adDismissed) {
@@ -93,16 +97,23 @@ const Home = ({navigation}: Props) => {
     }
   }, [adDismissed, navigation]);
 
-  const readItemFromStorage = useCallback(async () => {
+  const readItemFromStorage = async () => {
     const item = await getItem();
     if (!item) return;
     const loadedProfile: EnterFormData = JSON.parse(item);
     setProfile(loadedProfile);
-  }, [getItem]);
+  };
+  const readAnniversary = async () => {
+    const loadedAnniversary = await getAnniversary();
+    if (!loadedAnniversary) return;
+    const items: IAnniversary[] = JSON.parse(loadedAnniversary);
+    setAnniversaries(items);
+  };
 
   useEffect(() => {
     readItemFromStorage();
-  }, [readItemFromStorage]);
+    readAnniversary();
+  }, []);
 
   const goToAnniversary = () => {
     if (adLoaded) {
@@ -111,6 +122,17 @@ const Home = ({navigation}: Props) => {
       navigation.navigate('Anniversary');
     }
   };
+  const getDayDistance = (date: string) => {
+    return differenceInDays(new Date(date), today) + 1;
+  };
+  const isDayBefore = (date: string) => {
+    return getDayDistance(date) > 0;
+  };
+
+  const index = anniversaries.findIndex(anniversary =>
+    isDayBefore(anniversary.date),
+  );
+  console.log(index);
 
   return !profile ? null : (
     <Background source={{uri: profile?.photoUri}}>
@@ -126,11 +148,19 @@ const Home = ({navigation}: Props) => {
         </TotalDayText>
         <RowLayout>
           <AnniversaryCountBox>
-            <AnniversaryCountText>D-25</AnniversaryCountText>
+            <AnniversaryCountText>
+              D-{Math.abs(getDayDistance(anniversaries[index].date))}
+            </AnniversaryCountText>
           </AnniversaryCountBox>
           <FontAwesome5Icon name="calendar" color="#fff" />
-          <AnniversaryDateText>2022-03-15 </AnniversaryDateText>
-          <AnniversaryNameText>· 200-day anniversary </AnniversaryNameText>
+          {anniversaries[index]?.date ? (
+            <AnniversaryDateText>
+              {format(new Date(anniversaries[index].date), 'yyyy-MM-dd')}
+            </AnniversaryDateText>
+          ) : null}
+          <AnniversaryNameText>
+            · {anniversaries[index]?.text}{' '}
+          </AnniversaryNameText>
         </RowLayout>
       </Card>
     </Background>

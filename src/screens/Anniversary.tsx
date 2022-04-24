@@ -71,7 +71,7 @@ const Anniversary = ({navigation}: Props) => {
   };
   useEffect(() => {
     renderItemFromStorage();
-  });
+  }, []);
   const goBack = () => navigation.goBack();
   const isDayBefore = (date: string) => {
     return getDayDistance(date) > 0;
