@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "297475461915",
+    "project_id": "loveyou-98340",
+    "storage_bucket": "loveyou-98340.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297475461915:android:3a515447fa5e814fdfb9be",
+        "android_client_info": {
+          "package_name": "net.nextlevels.loveyou"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297475461915-kd17cj1gltbhtrrji557uq1u5hu1kvjo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAmistO__T8MN_3DC3jp2bjDbq_FjemGU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297475461915-kd17cj1gltbhtrrji557uq1u5hu1kvjo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "297475461915-dcbsfhal5k7svie45h7onvhknuhhnr85.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.nextlevels.loveyou"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
