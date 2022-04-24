@@ -132,9 +132,8 @@ const Home = ({navigation}: Props) => {
   const index = anniversaries.findIndex(anniversary =>
     isDayBefore(anniversary.date),
   );
-  console.log(index);
 
-  return !profile ? null : (
+  return !profile || anniversaries.length === 0 ? null : (
     <Background source={{uri: profile?.photoUri}}>
       <Card bottomInset={bottom} onPress={goToAnniversary}>
         <Blur blurType="extraDark" reducedTransparencyFallbackColor="white" />
