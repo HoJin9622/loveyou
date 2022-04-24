@@ -136,7 +136,10 @@ const Home = ({navigation}: Props) => {
   return !profile || anniversaries.length === 0 ? null : (
     <Background source={{uri: profile?.photoUri}}>
       <Card bottomInset={bottom} onPress={goToAnniversary}>
-        <Blur blurType="extraDark" reducedTransparencyFallbackColor="white" />
+        <Blur
+          blurType={Platform.OS === 'ios' ? 'extraDark' : 'dark'}
+          reducedTransparencyFallbackColor="white"
+        />
         <Name>{profile?.nickname}</Name>
         <TotalDayText>
           in love{' '}

@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import differenceInDays from 'date-fns/differenceInDays';
 import format from 'date-fns/format';
-import {FlatList, ListRenderItem} from 'react-native';
+import {FlatList, ListRenderItem, Platform} from 'react-native';
 import {BlurView} from '@react-native-community/blur';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -100,7 +100,12 @@ const Anniversary = ({navigation}: Props) => {
   );
   return (
     <Container topInset={top}>
-      <Blur blurType="extraDark" reducedTransparencyFallbackColor="white" />
+      {Platform.OS === 'ios' ? (
+        <Blur
+          blurType={Platform.OS === 'ios' ? 'extraDark' : 'dark'}
+          reducedTransparencyFallbackColor="white"
+        />
+      ) : null}
       <FlatList
         showsVerticalScrollIndicator={false}
         data={anniversaries}
