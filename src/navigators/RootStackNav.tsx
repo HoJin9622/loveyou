@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import Intro from '../screens/Intro'
+import Intro from '@screens/Intro'
 
 const Stack = createNativeStackNavigator()
 

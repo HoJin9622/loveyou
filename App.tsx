@@ -1,7 +1,7 @@
 import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useEffect, useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
-import RootStackNav from './src/navigators/RootStackNav'
+import RootStackNav from '@navigators/RootStackNav'
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false)
