@@ -1,7 +1,7 @@
-import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Text, View } from 'react-native'
 import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useEffect, useState } from 'react'
+import { NavigationContainer } from '@react-navigation/native'
+import RootStackNav from './src/navigators/RootStackNav'
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false)
@@ -42,18 +42,8 @@ export default function App() {
     return null
   }
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style='auto' />
-    </View>
+    <NavigationContainer onReady={onLayoutRootView}>
+      <RootStackNav />
+    </NavigationContainer>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-})
