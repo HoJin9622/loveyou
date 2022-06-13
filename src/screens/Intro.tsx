@@ -1,11 +1,16 @@
-import DismissKeyboard from '@components/DismissKeyboard'
+import DismissKeyboard from '@components/layouts/DismissKeyboard'
 import { RootStackParamsList } from '@navigators/navigator'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { StatusBar } from 'expo-status-bar'
-import { useLayoutEffect } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { Keyboard, Text } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { Entypo } from '@expo/vector-icons'
+import { Entypo, Feather } from '@expo/vector-icons'
+import RowLayout from '@components/layouts/RowLayout'
+import DateTimePicker, {
+  DateTimePickerAndroid,
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker'
 
 const Container = styled.View`
   flex: 1;
@@ -27,6 +32,7 @@ const Input = styled.TextInput`
   font-size: 32px;
   line-height: 38px;
   color: ${({ theme }) => theme.colors.black0};
+  margin-bottom: 24px;
 `
 const KeyboardAvoidingView = styled.KeyboardAvoidingView`
   flex: 1;
@@ -44,6 +50,27 @@ const Intro = ({ navigation }: Props) => {
   const onPhotoBoxClick = () => {
     Keyboard.dismiss()
   }
+
+  const [date, setDate] = useState(new Date(1598051730000))
+
+  const onChange = (event: DateTimePickerEvent, selectedDate: Date) => {
+    const currentDate = selectedDate
+    setDate(currentDate)
+  }
+
+  const showMode = (currentMode: string) => {
+    DateTimePickerAndroid.open({
+      value: date,
+      onChange,
+      mode: currentMode,
+      is24Hour: true,
+    })
+  }
+
+  const showDatepicker = () => {
+    showMode('date')
+  }
+
   return (
     <DismissKeyboard>
       <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={90}>
@@ -71,6 +98,41 @@ const Intro = ({ navigation }: Props) => {
             placeholder='이름 or 애칭'
             placeholderTextColor={colors.black0}
           />
+          <RowLayout>
+            <Feather
+              name='calendar'
+              size={24}
+              color={colors.black0}
+              style={{ marginRight: 8 }}
+            />
+            <Text
+              onPress={showDatepicker}
+              style={{ color: colors.black0, fontSize: 16, lineHeight: 19 }}
+            >
+              생일
+            </Text>
+            <Feather
+              name='calendar'
+              size={24}
+              color={colors.black0}
+              style={{ marginRight: 8, marginLeft: 24 }}
+            />
+            <Text
+              style={{ color: colors.black0, fontSize: 16, lineHeight: 19 }}
+            >
+              사귀기 시작한 날
+            </Text>
+          </RowLayout>
+          {true && (
+            <DateTimePicker
+              style={{ width: '100%' }}
+              testID='dateTimePicker'
+              value={date}
+              mode='date'
+              onChange={onChange}
+              display='spinner'
+            />
+          )}
         </Container>
       </KeyboardAvoidingView>
     </DismissKeyboard>
