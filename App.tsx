@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import RootStackNav from '@navigators/RootStackNav'
 import { ThemeProvider } from 'styled-components'
 import theme from './src/theme'
+import * as Font from 'expo-font'
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false)
@@ -12,7 +13,11 @@ export default function App() {
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync()
-        await new Promise((resolve) => setTimeout(resolve, 2000))
+        await Font.loadAsync({
+          'Pretendard-Bold': require('./assets/fonts/Pretendard-Bold.otf'),
+          'Pretendard-Medium': require('./assets/fonts/Pretendard-Medium.otf'),
+          'Pretendard-Regular': require('./assets/fonts/Pretendard-Regular.otf'),
+        })
       } catch (e) {
         console.warn(e)
       } finally {

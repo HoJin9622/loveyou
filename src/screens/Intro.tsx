@@ -2,8 +2,8 @@ import DismissKeyboard from '@components/layouts/DismissKeyboard'
 import { RootStackParamsList } from '@navigators/navigator'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { StatusBar } from 'expo-status-bar'
-import { useLayoutEffect, useState } from 'react'
-import { Keyboard, Text } from 'react-native'
+import { useEffect, useLayoutEffect } from 'react'
+import { Keyboard, Platform, Text } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { Entypo, Feather } from '@expo/vector-icons'
 import RowLayout from '@components/layouts/RowLayout'
@@ -12,7 +12,8 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker'
 import * as ImagePicker from 'expo-image-picker'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
+import { Caption1 } from '@components/typhography'
 
 interface UserForm {
   photo: string
@@ -26,16 +27,31 @@ type Props = NativeStackScreenProps<RootStackParamsList, 'Intro'>
 const Intro = ({ navigation }: Props) => {
   const { colors } = useTheme()
   const {
+    watch,
     control,
-    formState: { isValid },
+    register,
+    setValue,
     handleSubmit,
+    formState: { isValid },
   } = useForm<UserForm>({ mode: 'onChange' })
-  const [photo, setPhoto] = useState<string | null>(null)
+
+  useEffect(() => {
+    register('photo', { required: true })
+  }, [register])
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <Text style={{ color: '#fff' }}>완료</Text>,
+      headerRight: () => (
+        <Caption1
+          color={colors.black0}
+          opacity={isValid ? 1 : 0.5}
+          fontWeight={isValid ? 700 : 400}
+        >
+          완료
+        </Caption1>
+      ),
     })
-  }, [navigation])
+  }, [navigation, isValid])
+
   const onPhotoBoxClick = async () => {
     Keyboard.dismiss()
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -44,7 +60,9 @@ const Intro = ({ navigation }: Props) => {
       base64: true,
     })
     if (!result.cancelled && result.base64) {
-      setPhoto(`data:image/jpeg;base64,${result.base64}`)
+      setValue('photo', `data:image/jpeg;base64,${result.base64}`, {
+        shouldValidate: true,
+      })
     }
   }
 
@@ -70,40 +88,37 @@ const Intro = ({ navigation }: Props) => {
 
   return (
     <DismissKeyboard>
-      <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={90}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={90}
+      >
         <Container>
           <StatusBar style='light' />
           <PhotoBox onPress={onPhotoBoxClick}>
-            {photo ? (
-              <Photo source={{ uri: photo }} />
+            {watch('photo') ? (
+              <Photo source={{ uri: watch('photo') }} />
             ) : (
               <>
                 <Entypo name='plus' size={44} color={colors.black900} />
-                <Text
-                  style={{
-                    color: colors.black500,
-                    fontSize: 16,
-                    lineHeight: 19,
-                    marginTop: 47,
-                  }}
-                >
+                <Caption1 opacity={0.5} mt={48}>
                   여기를 터치해서
-                </Text>
-                <Text
-                  style={{
-                    color: colors.black500,
-                    fontSize: 16,
-                    lineHeight: 19,
-                  }}
-                >
-                  원하는 사진을 선택해주세요.
-                </Text>
+                </Caption1>
+                <Caption1 opacity={0.5}>원하는 사진을 선택해주세요.</Caption1>
               </>
             )}
           </PhotoBox>
-          <Input
-            placeholder='이름 or 애칭'
-            placeholderTextColor={colors.black0}
+          <Controller
+            control={control}
+            rules={{ required: true }}
+            render={({ field: { value, onChange } }) => (
+              <Input
+                placeholder='이름 or 애칭'
+                placeholderTextColor={colors.black0}
+                value={value}
+                onChangeText={onChange}
+              />
+            )}
+            name='name'
           />
           <RowLayout>
             <Feather
@@ -112,23 +127,14 @@ const Intro = ({ navigation }: Props) => {
               color={colors.black0}
               style={{ marginRight: 8 }}
             />
-            <Text
-              // onPress={showDatepicker}
-              style={{ color: colors.black0, fontSize: 16, lineHeight: 19 }}
-            >
-              생일
-            </Text>
+            <Caption1 color={colors.black0}>생일</Caption1>
             <Feather
               name='calendar'
               size={24}
               color={colors.black0}
               style={{ marginRight: 8, marginLeft: 24 }}
             />
-            <Text
-              style={{ color: colors.black0, fontSize: 16, lineHeight: 19 }}
-            >
-              사귀기 시작한 날
-            </Text>
+            <Caption1 color={colors.black0}>사귀기 시작한 날</Caption1>
           </RowLayout>
           {/* {true && (
             <DateTimePicker
@@ -174,6 +180,7 @@ const Input = styled.TextInput`
   line-height: 38px;
   color: ${({ theme }) => theme.colors.black0};
   margin-bottom: 24px;
+  text-align: center;
 `
 const KeyboardAvoidingView = styled.KeyboardAvoidingView`
   flex: 1;
