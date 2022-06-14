@@ -12,11 +12,24 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker'
 import * as ImagePicker from 'expo-image-picker'
+import { useForm } from 'react-hook-form'
+
+interface UserForm {
+  photo: string
+  name: string
+  birth: string
+  firstDay: string
+}
 
 type Props = NativeStackScreenProps<RootStackParamsList, 'Intro'>
 
 const Intro = ({ navigation }: Props) => {
   const { colors } = useTheme()
+  const {
+    control,
+    formState: { isValid },
+    handleSubmit,
+  } = useForm<UserForm>({ mode: 'onChange' })
   const [photo, setPhoto] = useState<string | null>(null)
   useLayoutEffect(() => {
     navigation.setOptions({
