@@ -2,20 +2,26 @@ import DismissKeyboard from '@components/layouts/DismissKeyboard'
 import { RootStackParamsList } from '@navigators/navigator'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { StatusBar } from 'expo-status-bar'
-import { useEffect, useLayoutEffect } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { Keyboard, Platform } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { Entypo } from '@expo/vector-icons'
-import RowLayout from '@components/layouts/RowLayout'
+import Row from '@components/layouts/Row'
 import * as ImagePicker from 'expo-image-picker'
 import { Controller, useForm } from 'react-hook-form'
 import { Caption1 } from '@components/typhography'
 import Svg, { Path } from 'react-native-svg'
+import Modal from 'react-native-modal'
+import TouchableRow from '@components/layouts/TouchableRow'
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker'
+import dayjs from 'dayjs'
 
 interface UserForm {
   photo: string
   name: string
-  birth: string
+  birth: Date
   firstDay: string
 }
 
@@ -23,6 +29,7 @@ type Props = NativeStackScreenProps<RootStackParamsList, 'Intro'>
 
 const Intro = ({ navigation }: Props) => {
   const { colors } = useTheme()
+  const [birthModalVisible, setBirthModalVisible] = useState(false)
   const {
     watch,
     control,
@@ -34,6 +41,7 @@ const Intro = ({ navigation }: Props) => {
 
   useEffect(() => {
     register('photo', { required: true })
+    register('birth', { required: true })
   }, [register])
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -62,6 +70,15 @@ const Intro = ({ navigation }: Props) => {
       setValue('photo', `data:image/jpeg;base64,${result.base64}`, {
         shouldValidate: true,
       })
+    }
+  }
+  const toggleBirthModal = () => setBirthModalVisible((prev) => !prev)
+  const onBirthPress = () => {
+    toggleBirthModal()
+  }
+  const onBirthChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (selectedDate) {
+      setValue('birth', selectedDate, { shouldValidate: true })
     }
   }
 
@@ -99,26 +116,47 @@ const Intro = ({ navigation }: Props) => {
             )}
             name='name'
           />
-          <RowLayout>
-            <Svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
-              <Path
-                d='M1.33334 12.6666C1.33334 13.8 2.20001 14.6666 3.33334 14.6666H12.6667C13.8 14.6666 14.6667 13.8 14.6667 12.6666V7.33331H1.33334V12.6666ZM12.6667 2.66665H11.3333V1.99998C11.3333 1.59998 11.0667 1.33331 10.6667 1.33331C10.2667 1.33331 10 1.59998 10 1.99998V2.66665H6.00001V1.99998C6.00001 1.59998 5.73334 1.33331 5.33334 1.33331C4.93334 1.33331 4.66668 1.59998 4.66668 1.99998V2.66665H3.33334C2.20001 2.66665 1.33334 3.53331 1.33334 4.66665V5.99998H14.6667V4.66665C14.6667 3.53331 13.8 2.66665 12.6667 2.66665Z'
-                fill={colors.black0}
-              />
-            </Svg>
-            <Caption1 color={colors.black0} ml={8} mr={24}>
-              생일
-            </Caption1>
-            <Svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
-              <Path
-                d='M1.33334 12.6666C1.33334 13.8 2.20001 14.6666 3.33334 14.6666H12.6667C13.8 14.6666 14.6667 13.8 14.6667 12.6666V7.33331H1.33334V12.6666ZM12.6667 2.66665H11.3333V1.99998C11.3333 1.59998 11.0667 1.33331 10.6667 1.33331C10.2667 1.33331 10 1.59998 10 1.99998V2.66665H6.00001V1.99998C6.00001 1.59998 5.73334 1.33331 5.33334 1.33331C4.93334 1.33331 4.66668 1.59998 4.66668 1.99998V2.66665H3.33334C2.20001 2.66665 1.33334 3.53331 1.33334 4.66665V5.99998H14.6667V4.66665C14.6667 3.53331 13.8 2.66665 12.6667 2.66665Z'
-                fill={colors.black0}
-              />
-            </Svg>
+          <Row>
+            <TouchableRow onPress={onBirthPress}>
+              <Svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
+                <Path
+                  d='M1.33334 12.6666C1.33334 13.8 2.20001 14.6666 3.33334 14.6666H12.6667C13.8 14.6666 14.6667 13.8 14.6667 12.6666V7.33331H1.33334V12.6666ZM12.6667 2.66665H11.3333V1.99998C11.3333 1.59998 11.0667 1.33331 10.6667 1.33331C10.2667 1.33331 10 1.59998 10 1.99998V2.66665H6.00001V1.99998C6.00001 1.59998 5.73334 1.33331 5.33334 1.33331C4.93334 1.33331 4.66668 1.59998 4.66668 1.99998V2.66665H3.33334C2.20001 2.66665 1.33334 3.53331 1.33334 4.66665V5.99998H14.6667V4.66665C14.6667 3.53331 13.8 2.66665 12.6667 2.66665Z'
+                  fill={colors.black0}
+                />
+              </Svg>
+              <Caption1 color={colors.black0} ml={8} mr={24}>
+                {watch('birth')
+                  ? dayjs(watch('birth')).format('YYYY-MM-DD')
+                  : '생일'}
+              </Caption1>
+            </TouchableRow>
+            <TouchableRow>
+              <Svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
+                <Path
+                  d='M1.33334 12.6666C1.33334 13.8 2.20001 14.6666 3.33334 14.6666H12.6667C13.8 14.6666 14.6667 13.8 14.6667 12.6666V7.33331H1.33334V12.6666ZM12.6667 2.66665H11.3333V1.99998C11.3333 1.59998 11.0667 1.33331 10.6667 1.33331C10.2667 1.33331 10 1.59998 10 1.99998V2.66665H6.00001V1.99998C6.00001 1.59998 5.73334 1.33331 5.33334 1.33331C4.93334 1.33331 4.66668 1.59998 4.66668 1.99998V2.66665H3.33334C2.20001 2.66665 1.33334 3.53331 1.33334 4.66665V5.99998H14.6667V4.66665C14.6667 3.53331 13.8 2.66665 12.6667 2.66665Z'
+                  fill={colors.black0}
+                />
+              </Svg>
+            </TouchableRow>
             <Caption1 color={colors.black0} ml={8}>
               사귀기 시작한 날
             </Caption1>
-          </RowLayout>
+          </Row>
+          <ModalContainer
+            isVisible={birthModalVisible}
+            onBackButtonPress={toggleBirthModal}
+            onBackdropPress={toggleBirthModal}
+          >
+            <ModalBox>
+              <DateTimePicker
+                testID='dateTimePicker'
+                value={watch('birth') || new Date('1997-01-01')}
+                mode='date'
+                onChange={onBirthChange}
+                display='spinner'
+              />
+            </ModalBox>
+          </ModalContainer>
         </Container>
       </KeyboardAvoidingView>
     </DismissKeyboard>
@@ -157,4 +195,15 @@ const Input = styled.TextInput`
 `
 const KeyboardAvoidingView = styled.KeyboardAvoidingView`
   flex: 1;
+`
+const ModalContainer = styled(Modal)`
+  margin: 0;
+  justify-content: flex-end;
+`
+const ModalBox = styled.View`
+  width: 100%;
+  padding: 16px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  background: ${({ theme }) => theme.colors.black0};
 `
