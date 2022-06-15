@@ -9,12 +9,13 @@ import { Entypo } from '@expo/vector-icons'
 import Row from '@components/layouts/Row'
 import * as ImagePicker from 'expo-image-picker'
 import { Controller, useForm } from 'react-hook-form'
-import { Caption1 } from '@components/typhography'
+import { Caption1 } from '@components/typography'
 import Svg, { Path } from 'react-native-svg'
 import Modal from 'react-native-modal'
 import TouchableRow from '@components/layouts/TouchableRow'
 import DateTimePicker, {
   DateTimePickerEvent,
+  DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker'
 import dayjs from 'dayjs'
 
@@ -22,7 +23,7 @@ interface UserForm {
   photo: string
   name: string
   birth: Date
-  firstDay: string
+  firstDay: Date
 }
 
 type Props = NativeStackScreenProps<RootStackParamsList, 'Intro'>
@@ -30,6 +31,7 @@ type Props = NativeStackScreenProps<RootStackParamsList, 'Intro'>
 const Intro = ({ navigation }: Props) => {
   const { colors } = useTheme()
   const [birthModalVisible, setBirthModalVisible] = useState(false)
+  const [firstDayModalVisible, setFirstDayModalVisible] = useState(false)
   const {
     watch,
     control,
@@ -42,6 +44,7 @@ const Intro = ({ navigation }: Props) => {
   useEffect(() => {
     register('photo', { required: true })
     register('birth', { required: true })
+    register('firstDay', { required: true })
   }, [register])
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -58,7 +61,9 @@ const Intro = ({ navigation }: Props) => {
     })
   }, [navigation, isValid])
 
-  const onValid = () => {}
+  const onValid = ({}: UserForm) => {
+    console.log('valid!')
+  }
   const onPhotoBoxClick = async () => {
     Keyboard.dismiss()
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -73,12 +78,39 @@ const Intro = ({ navigation }: Props) => {
     }
   }
   const toggleBirthModal = () => setBirthModalVisible((prev) => !prev)
+  const toggleFirstDayModal = () => setFirstDayModalVisible((prev) => !prev)
   const onBirthPress = () => {
-    toggleBirthModal()
+    setValue('birth', new Date('1997-01-01'))
+    if (Platform.OS === 'ios') {
+      toggleBirthModal()
+    }
+    if (Platform.OS === 'android') {
+      DateTimePickerAndroid.open({
+        value: watch('birth') || new Date('1997-01-01'),
+        onChange: onBirthChange,
+      })
+    }
   }
-  const onBirthChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+  const onFirstDayPress = () => {
+    setValue('firstDay', new Date())
+    if (Platform.OS === 'ios') {
+      toggleFirstDayModal()
+    }
+    if (Platform.OS === 'android') {
+      DateTimePickerAndroid.open({
+        value: watch('firstDay') || new Date(),
+        onChange: onFirstDayChange,
+      })
+    }
+  }
+  const onBirthChange = (_: DateTimePickerEvent, selectedDate?: Date) => {
     if (selectedDate) {
       setValue('birth', selectedDate, { shouldValidate: true })
+    }
+  }
+  const onFirstDayChange = (_: DateTimePickerEvent, selectedDate?: Date) => {
+    if (selectedDate) {
+      setValue('firstDay', selectedDate, { shouldValidate: true })
     }
   }
 
@@ -130,30 +162,49 @@ const Intro = ({ navigation }: Props) => {
                   : '생일'}
               </Caption1>
             </TouchableRow>
-            <TouchableRow>
+            <TouchableRow onPress={onFirstDayPress}>
               <Svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
                 <Path
                   d='M1.33334 12.6666C1.33334 13.8 2.20001 14.6666 3.33334 14.6666H12.6667C13.8 14.6666 14.6667 13.8 14.6667 12.6666V7.33331H1.33334V12.6666ZM12.6667 2.66665H11.3333V1.99998C11.3333 1.59998 11.0667 1.33331 10.6667 1.33331C10.2667 1.33331 10 1.59998 10 1.99998V2.66665H6.00001V1.99998C6.00001 1.59998 5.73334 1.33331 5.33334 1.33331C4.93334 1.33331 4.66668 1.59998 4.66668 1.99998V2.66665H3.33334C2.20001 2.66665 1.33334 3.53331 1.33334 4.66665V5.99998H14.6667V4.66665C14.6667 3.53331 13.8 2.66665 12.6667 2.66665Z'
                   fill={colors.black0}
                 />
               </Svg>
+              <Caption1 color={colors.black0} ml={8}>
+                {watch('firstDay')
+                  ? dayjs(watch('firstDay')).format('YYYY-MM-DD')
+                  : '사귀기 시작한 날'}
+              </Caption1>
             </TouchableRow>
-            <Caption1 color={colors.black0} ml={8}>
-              사귀기 시작한 날
-            </Caption1>
           </Row>
           <ModalContainer
-            isVisible={birthModalVisible}
+            isVisible={birthModalVisible && Platform.OS === 'ios'}
             onBackButtonPress={toggleBirthModal}
             onBackdropPress={toggleBirthModal}
           >
             <ModalBox>
               <DateTimePicker
-                testID='dateTimePicker'
+                testID='birth'
                 value={watch('birth') || new Date('1997-01-01')}
                 mode='date'
                 onChange={onBirthChange}
                 display='spinner'
+                textColor={colors.black900}
+              />
+            </ModalBox>
+          </ModalContainer>
+          <ModalContainer
+            isVisible={firstDayModalVisible && Platform.OS === 'ios'}
+            onBackButtonPress={toggleFirstDayModal}
+            onBackdropPress={toggleFirstDayModal}
+          >
+            <ModalBox>
+              <DateTimePicker
+                testID='firstDay'
+                value={watch('firstDay') || new Date()}
+                mode='date'
+                onChange={onFirstDayChange}
+                display='spinner'
+                textColor={colors.black900}
               />
             </ModalBox>
           </ModalContainer>
