@@ -3,17 +3,14 @@ import { RootStackParamsList } from '@navigators/navigator'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useLayoutEffect } from 'react'
-import { Keyboard, Platform, Text } from 'react-native'
+import { Keyboard, Platform } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { Entypo, Feather } from '@expo/vector-icons'
+import { Entypo } from '@expo/vector-icons'
 import RowLayout from '@components/layouts/RowLayout'
-import DateTimePicker, {
-  DateTimePickerAndroid,
-  DateTimePickerEvent,
-} from '@react-native-community/datetimepicker'
 import * as ImagePicker from 'expo-image-picker'
 import { Controller, useForm } from 'react-hook-form'
 import { Caption1 } from '@components/typhography'
+import Svg, { Path } from 'react-native-svg'
 
 interface UserForm {
   photo: string
@@ -45,6 +42,7 @@ const Intro = ({ navigation }: Props) => {
           color={colors.black0}
           opacity={isValid ? 1 : 0.5}
           fontWeight={isValid ? 700 : 400}
+          onPress={handleSubmit(onValid)}
         >
           완료
         </Caption1>
@@ -52,6 +50,7 @@ const Intro = ({ navigation }: Props) => {
     })
   }, [navigation, isValid])
 
+  const onValid = () => {}
   const onPhotoBoxClick = async () => {
     Keyboard.dismiss()
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -65,26 +64,6 @@ const Intro = ({ navigation }: Props) => {
       })
     }
   }
-
-  // const [date, setDate] = useState(new Date(1598051730000))
-
-  // const onChange = (event: DateTimePickerEvent, selectedDate: Date) => {
-  //   const currentDate = selectedDate
-  //   setDate(currentDate)
-  // }
-
-  // const showMode = (currentMode: string) => {
-  //   DateTimePickerAndroid.open({
-  //     value: date,
-  //     onChange,
-  //     mode: currentMode,
-  //     is24Hour: true,
-  //   })
-  // }
-
-  // const showDatepicker = () => {
-  //   showMode('date')
-  // }
 
   return (
     <DismissKeyboard>
@@ -121,31 +100,25 @@ const Intro = ({ navigation }: Props) => {
             name='name'
           />
           <RowLayout>
-            <Feather
-              name='calendar'
-              size={24}
-              color={colors.black0}
-              style={{ marginRight: 8 }}
-            />
-            <Caption1 color={colors.black0}>생일</Caption1>
-            <Feather
-              name='calendar'
-              size={24}
-              color={colors.black0}
-              style={{ marginRight: 8, marginLeft: 24 }}
-            />
-            <Caption1 color={colors.black0}>사귀기 시작한 날</Caption1>
+            <Svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
+              <Path
+                d='M1.33334 12.6666C1.33334 13.8 2.20001 14.6666 3.33334 14.6666H12.6667C13.8 14.6666 14.6667 13.8 14.6667 12.6666V7.33331H1.33334V12.6666ZM12.6667 2.66665H11.3333V1.99998C11.3333 1.59998 11.0667 1.33331 10.6667 1.33331C10.2667 1.33331 10 1.59998 10 1.99998V2.66665H6.00001V1.99998C6.00001 1.59998 5.73334 1.33331 5.33334 1.33331C4.93334 1.33331 4.66668 1.59998 4.66668 1.99998V2.66665H3.33334C2.20001 2.66665 1.33334 3.53331 1.33334 4.66665V5.99998H14.6667V4.66665C14.6667 3.53331 13.8 2.66665 12.6667 2.66665Z'
+                fill={colors.black0}
+              />
+            </Svg>
+            <Caption1 color={colors.black0} ml={8} mr={24}>
+              생일
+            </Caption1>
+            <Svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
+              <Path
+                d='M1.33334 12.6666C1.33334 13.8 2.20001 14.6666 3.33334 14.6666H12.6667C13.8 14.6666 14.6667 13.8 14.6667 12.6666V7.33331H1.33334V12.6666ZM12.6667 2.66665H11.3333V1.99998C11.3333 1.59998 11.0667 1.33331 10.6667 1.33331C10.2667 1.33331 10 1.59998 10 1.99998V2.66665H6.00001V1.99998C6.00001 1.59998 5.73334 1.33331 5.33334 1.33331C4.93334 1.33331 4.66668 1.59998 4.66668 1.99998V2.66665H3.33334C2.20001 2.66665 1.33334 3.53331 1.33334 4.66665V5.99998H14.6667V4.66665C14.6667 3.53331 13.8 2.66665 12.6667 2.66665Z'
+                fill={colors.black0}
+              />
+            </Svg>
+            <Caption1 color={colors.black0} ml={8}>
+              사귀기 시작한 날
+            </Caption1>
           </RowLayout>
-          {/* {true && (
-            <DateTimePicker
-              style={{ width: '100%' }}
-              testID='dateTimePicker'
-              value={date}
-              mode='date'
-              onChange={onChange}
-              display='spinner'
-            />
-          )} */}
         </Container>
       </KeyboardAvoidingView>
     </DismissKeyboard>
