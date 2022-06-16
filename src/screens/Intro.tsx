@@ -28,6 +28,9 @@ interface UserForm {
 
 type Props = NativeStackScreenProps<RootStackParamsList, 'Intro'>
 
+const DEFAULT_BIRTH = new Date('1997-01-01')
+const NOW = new Date()
+
 const Intro = ({ navigation }: Props) => {
   const { colors } = useTheme()
   const [birthModalVisible, setBirthModalVisible] = useState(false)
@@ -61,9 +64,7 @@ const Intro = ({ navigation }: Props) => {
     })
   }, [navigation, isValid])
 
-  const onValid = ({}: UserForm) => {
-    console.log('valid!')
-  }
+  const onValid = async ({}: UserForm) => {}
   const onPhotoBoxClick = async () => {
     Keyboard.dismiss()
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -80,25 +81,25 @@ const Intro = ({ navigation }: Props) => {
   const toggleBirthModal = () => setBirthModalVisible((prev) => !prev)
   const toggleFirstDayModal = () => setFirstDayModalVisible((prev) => !prev)
   const onBirthPress = () => {
-    setValue('birth', new Date('1997-01-01'))
+    setValue('birth', DEFAULT_BIRTH)
     if (Platform.OS === 'ios') {
       toggleBirthModal()
     }
     if (Platform.OS === 'android') {
       DateTimePickerAndroid.open({
-        value: watch('birth') || new Date('1997-01-01'),
+        value: watch('birth') || DEFAULT_BIRTH,
         onChange: onBirthChange,
       })
     }
   }
   const onFirstDayPress = () => {
-    setValue('firstDay', new Date())
+    setValue('firstDay', NOW)
     if (Platform.OS === 'ios') {
       toggleFirstDayModal()
     }
     if (Platform.OS === 'android') {
       DateTimePickerAndroid.open({
-        value: watch('firstDay') || new Date(),
+        value: watch('firstDay') || NOW,
         onChange: onFirstDayChange,
       })
     }
@@ -184,7 +185,7 @@ const Intro = ({ navigation }: Props) => {
             <ModalBox>
               <DateTimePicker
                 testID='birth'
-                value={watch('birth') || new Date('1997-01-01')}
+                value={watch('birth') || DEFAULT_BIRTH}
                 mode='date'
                 onChange={onBirthChange}
                 display='spinner'
@@ -200,7 +201,7 @@ const Intro = ({ navigation }: Props) => {
             <ModalBox>
               <DateTimePicker
                 testID='firstDay'
-                value={watch('firstDay') || new Date()}
+                value={watch('firstDay') || NOW}
                 mode='date'
                 onChange={onFirstDayChange}
                 display='spinner'
