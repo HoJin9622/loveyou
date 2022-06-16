@@ -6,14 +6,21 @@ import { Body1, Caption2, Caption3, Title } from '@components/typography'
 import Row from '@components/layouts/Row'
 import Svg, { Path } from 'react-native-svg'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { getDifference } from '@utils/date'
-
-const now = new Date()
+import { getComingDate, getDifference } from '@utils/date'
+import { useMemo } from 'react'
+import dayjs from 'dayjs'
 
 const Home = () => {
   const { colors } = useTheme()
   const { bottom } = useSafeAreaInsets()
   const [user] = useRecoilState(userState)
+
+  const [comingDate, day] = useMemo(() => {
+    if (user) {
+      return getComingDate(user.firstDay)
+    }
+    return [dayjs(new Date()), 0]
+  }, [user])
   return !user ? null : (
     <Container>
       <ImageBackground source={{ uri: user.photo }} style={{ flex: 1 }}>
@@ -24,14 +31,14 @@ const Home = () => {
           <Body1 color={colors.black0} mb={12}>
             in love{' '}
             <Body1 color={colors.black0} fontWeight={700}>
-              {getDifference(now, user.firstDay)}
+              {getDifference(dayjs(user.firstDay)) + 1}
             </Body1>{' '}
             days
           </Body1>
           <Row>
             <LeftDay>
               <Caption3 fontWeight={700} color={colors.black0}>
-                D-25
+                D{getDifference(comingDate)}
               </Caption3>
             </LeftDay>
             <Svg width='13' height='12' viewBox='0 0 13 12' fill='none'>
@@ -41,9 +48,9 @@ const Home = () => {
               />
             </Svg>
             <Caption2 fontWeight={700} color={colors.black0} ml={2}>
-              2022-03-15
+              {comingDate.format('YYYY-MM-DD')}
             </Caption2>
-            <Caption2 color={colors.black0}> · 200-day anniversary </Caption2>
+            <Caption2 color={colors.black0}> · {day}-day anniversary </Caption2>
           </Row>
         </UserInfo>
       </ImageBackground>
