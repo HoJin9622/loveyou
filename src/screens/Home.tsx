@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useRecoilState } from 'recoil'
 import { userState } from '@utils/atom'
 import styled, { useTheme } from 'styled-components/native'
@@ -12,21 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 const Home = () => {
   const { colors } = useTheme()
   const { bottom } = useSafeAreaInsets()
-  const [user, setUser] = useRecoilState(userState)
-  useEffect(() => {
-    getUser()
-  }, [])
-  const getUser = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem('user')
-      let user = jsonValue != null ? JSON.parse(jsonValue) : null
-      user.birth = new Date(user.birth)
-      user.firstDay = new Date(user.firstDay)
-      setUser(user)
-    } catch (e) {
-      console.log('getUser err ', e)
-    }
-  }
+  const [user] = useRecoilState(userState)
   return !user ? null : (
     <Container>
       <ImageBackground source={{ uri: user.photo }} style={{ flex: 1 }}>
