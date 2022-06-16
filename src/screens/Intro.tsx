@@ -19,7 +19,8 @@ import DateTimePicker, {
 } from '@react-native-community/datetimepicker'
 import dayjs from 'dayjs'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { UserForm } from '@utils/atom'
+import { UserForm, userState } from '@utils/atom'
+import { useRecoilState } from 'recoil'
 
 type Props = NativeStackScreenProps<RootStackParamsList, 'Intro'>
 
@@ -28,6 +29,7 @@ const NOW = new Date()
 
 const Intro = ({ navigation }: Props) => {
   const { colors } = useTheme()
+  const [_, setUser] = useRecoilState(userState)
   const [birthModalVisible, setBirthModalVisible] = useState(false)
   const [firstDayModalVisible, setFirstDayModalVisible] = useState(false)
   const {
@@ -61,6 +63,7 @@ const Intro = ({ navigation }: Props) => {
 
   const onValid = async (form: UserForm) => {
     try {
+      setUser(form)
       await AsyncStorage.setItem('user', JSON.stringify(form))
       navigation.replace('Home')
     } catch (e) {

@@ -6,6 +6,9 @@ import { Body1, Caption2, Caption3, Title } from '@components/typography'
 import Row from '@components/layouts/Row'
 import Svg, { Path } from 'react-native-svg'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { getDifference } from '@utils/date'
+
+const now = new Date()
 
 const Home = () => {
   const { colors } = useTheme()
@@ -21,7 +24,7 @@ const Home = () => {
           <Body1 color={colors.black0} mb={12}>
             in love{' '}
             <Body1 color={colors.black0} fontWeight={700}>
-              185
+              {getDifference(now, user.firstDay)}
             </Body1>{' '}
             days
           </Body1>
