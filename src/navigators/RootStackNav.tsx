@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import Home from '@screens/Home'
 import Intro from '@screens/Intro'
 import { useTheme } from 'styled-components'
 import { RootStackParamsList } from './navigator'
@@ -16,6 +17,11 @@ const RootStackNav = () => {
           title: '',
           headerStyle: { backgroundColor: colors.black800 },
         }}
+      />
+      <Stack.Screen
+        name='Home'
+        component={Home}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   )

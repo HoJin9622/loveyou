@@ -23,7 +23,23 @@ const Typography = styled.Text<TypographyProps>`
   color: ${({ color, theme }) => (color ? color : theme.colors.black900)};
   opacity: ${({ opacity }) => (opacity ? opacity : 1)};
 `
+export const Title = styled(Typography)`
+  font-size: ${({ theme }) => theme.fontSizes.title}px;
+  line-height: ${({ theme }) => theme.lineHeights.title}px;
+`
+export const Body1 = styled(Typography)`
+  font-size: ${({ theme }) => theme.fontSizes.body1}px;
+  line-height: ${({ theme }) => theme.lineHeights.body1}px;
+`
 export const Caption1 = styled(Typography)`
   font-size: ${({ theme }) => theme.fontSizes.caption1}px;
   line-height: ${({ theme }) => theme.lineHeights.caption1}px;
+`
+export const Caption2 = styled(Typography)`
+  font-size: ${({ theme }) => theme.fontSizes.caption2}px;
+  line-height: ${({ theme }) => theme.lineHeights.caption2}px;
+`
+export const Caption3 = styled(Typography)`
+  font-size: ${({ theme }) => theme.fontSizes.caption3}px;
+  line-height: ${({ theme }) => theme.lineHeights.caption3}px;
 `

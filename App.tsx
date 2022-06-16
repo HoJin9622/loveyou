@@ -5,6 +5,7 @@ import RootStackNav from '@navigators/RootStackNav'
 import { ThemeProvider } from 'styled-components'
 import theme from './src/theme'
 import * as Font from 'expo-font'
+import { RecoilRoot } from 'recoil'
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false)
@@ -37,10 +38,12 @@ export default function App() {
     return null
   }
   return (
-    <ThemeProvider theme={theme}>
-      <NavigationContainer onReady={onLayoutRootView}>
-        <RootStackNav />
-      </NavigationContainer>
-    </ThemeProvider>
+    <RecoilRoot>
+      <ThemeProvider theme={theme}>
+        <NavigationContainer onReady={onLayoutRootView}>
+          <RootStackNav />
+        </NavigationContainer>
+      </ThemeProvider>
+    </RecoilRoot>
   )
 }

@@ -10,6 +10,7 @@ module.exports = function (api) {
             '@navigators': './src/navigators',
             '@components': './src/components',
             '@screens': './src/screens',
+            '@utils': './src/utils',
           },
           extensions: ['.js', '.jsx', '.ts', '.tsx'],
         },

@@ -18,13 +18,8 @@ import DateTimePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker'
 import dayjs from 'dayjs'
-
-interface UserForm {
-  photo: string
-  name: string
-  birth: Date
-  firstDay: Date
-}
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { UserForm } from '@utils/atom'
 
 type Props = NativeStackScreenProps<RootStackParamsList, 'Intro'>
 
@@ -64,7 +59,14 @@ const Intro = ({ navigation }: Props) => {
     })
   }, [navigation, isValid])
 
-  const onValid = async ({}: UserForm) => {}
+  const onValid = async (form: UserForm) => {
+    try {
+      await AsyncStorage.setItem('user', JSON.stringify(form))
+      navigation.replace('Home')
+    } catch (e) {
+      console.log('onValid err ', e)
+    }
+  }
   const onPhotoBoxClick = async () => {
     Keyboard.dismiss()
     let result = await ImagePicker.launchImageLibraryAsync({
