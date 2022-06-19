@@ -8,6 +8,9 @@ import { RootStackParamsList } from './navigator'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useEffect } from 'react'
 import { useState } from 'react'
+import EditProfile from '@screens/EditProfile'
+import { AntDesign } from '@expo/vector-icons'
+import styled from 'styled-components/native'
 
 const Stack = createNativeStackNavigator<RootStackParamsList>()
 
@@ -32,7 +35,10 @@ const RootStackNav = () => {
     }
   }
   return loading && !user ? null : (
-    <Stack.Navigator initialRouteName={user ? 'Home' : 'Intro'}>
+    <Stack.Navigator
+      initialRouteName={user ? 'Home' : 'Intro'}
+      screenOptions={{ headerBackTitleVisible: false }}
+    >
       <Stack.Screen
         name='Intro'
         component={Intro}
@@ -46,8 +52,22 @@ const RootStackNav = () => {
         component={Home}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name='EditProfile'
+        component={EditProfile}
+        options={({ navigation }) => ({
+          title: '',
+          headerLeft: () => (
+            <BackButton onPress={() => navigation.goBack()}>
+              <AntDesign name='close' size={24} color={colors.black900} />
+            </BackButton>
+          ),
+        })}
+      />
     </Stack.Navigator>
   )
 }
 
 export default RootStackNav
+
+const BackButton = styled.Pressable``

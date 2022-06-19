@@ -9,10 +9,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { getComingDate, getDifference } from '@utils/date'
 import { useMemo } from 'react'
 import dayjs from 'dayjs'
+import { Feather } from '@expo/vector-icons'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamsList } from '@navigators/navigator'
 
-const Home = () => {
+type Props = NativeStackScreenProps<RootStackParamsList, 'Home'>
+
+const Home = ({ navigation }: Props) => {
   const { colors } = useTheme()
-  const { bottom } = useSafeAreaInsets()
+  const { bottom, top } = useSafeAreaInsets()
   const [user] = useRecoilState(userState)
 
   const [comingDate, day] = useMemo(() => {
@@ -21,6 +26,9 @@ const Home = () => {
     }
     return [dayjs(new Date()), 0]
   }, [user])
+
+  const goToEditProfile = () => navigation.navigate('EditProfile')
+
   return !user ? null : (
     <Container>
       <ImageBackground source={{ uri: user.photo }} style={{ flex: 1 }}>
@@ -53,6 +61,13 @@ const Home = () => {
             <Caption2 color={colors.black0}> · {day}-day anniversary </Caption2>
           </Row>
         </UserInfo>
+        <Menu
+          name='menu'
+          size={24}
+          color={colors.black0}
+          topInset={top}
+          onPress={goToEditProfile}
+        />
       </ImageBackground>
     </Container>
   )
@@ -76,4 +91,10 @@ const LeftDay = styled.View`
   background: ${({ theme }) => theme.colors.black900};
   border-radius: 2px;
   margin-right: 8px;
+`
+const Menu = styled(Feather)<{ topInset: number }>`
+  position: absolute;
+  z-index: 5;
+  top: ${({ topInset }) => topInset + 16}px;
+  left: 16px;
 `
