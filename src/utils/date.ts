@@ -9,11 +9,11 @@ export const getComingDate = (firstDay: Date): [dayjs.Dayjs, number] => {
   if (day50.isAfter(now)) {
     return [day50, 50]
   }
-  let day = 100
+  let day = 99
   let newDay = dayjs(firstDay).add(day, 'd')
   while (!newDay.isAfter(now)) {
     day += 100
     newDay = dayjs(firstDay).add(day, 'd')
   }
-  return [newDay, day]
+  return [newDay, day + 1]
 }

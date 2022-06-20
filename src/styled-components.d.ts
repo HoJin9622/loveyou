@@ -6,10 +6,13 @@ declare module 'styled-components' {
       black900: '#000'
       black800: '#121212'
       black500: '#7F7F7F'
+      black300: '#2d2f38'
+      black200: '#ebebf0'
       black0: '#fff'
     }
     fontSizes: {
       title: 32
+      subHeader: 20
       body1: 18
       caption1: 16
       caption2: 12
@@ -17,6 +20,7 @@ declare module 'styled-components' {
     }
     lineHeights: {
       title: 38
+      subHeader: 24
       body1: 22
       caption1: 19
       caption2: 14

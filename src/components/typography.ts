@@ -27,6 +27,10 @@ export const Title = styled(Typography)`
   font-size: ${({ theme }) => theme.fontSizes.title}px;
   line-height: ${({ theme }) => theme.lineHeights.title}px;
 `
+export const SubHeader = styled(Typography)`
+  font-size: ${({ theme }) => theme.fontSizes.subHeader}px;
+  line-height: ${({ theme }) => theme.lineHeights.subHeader}px;
+`
 export const Body1 = styled(Typography)`
   font-size: ${({ theme }) => theme.fontSizes.body1}px;
   line-height: ${({ theme }) => theme.lineHeights.body1}px;
