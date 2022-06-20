@@ -1,6 +1,6 @@
 import { RootStackParamsList } from '@navigators/navigator'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Caption1, SubHeader } from '@components/typography'
 import styled, { useTheme } from 'styled-components/native'
 import { useRecoilState } from 'recoil'
@@ -8,15 +8,22 @@ import { UserForm, userState } from '@utils/atom'
 import { Controller, useForm } from 'react-hook-form'
 import dayjs from 'dayjs'
 import Svg, { Path } from 'react-native-svg'
-import { Keyboard } from 'react-native'
+import { Keyboard, Platform } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import Modal from 'react-native-modal'
+import DateTimePicker, {
+  DateTimePickerEvent,
+  DateTimePickerAndroid,
+} from '@react-native-community/datetimepicker'
 
 type Props = NativeStackScreenProps<RootStackParamsList, 'EditProfile'>
 
 const EditProfile = ({ navigation }: Props) => {
   const { colors } = useTheme()
   const [user, setUser] = useRecoilState(userState)
+  const [birthModalVisible, setBirthModalVisible] = useState(false)
+  const [firstDayModalVisible, setFirstDayModalVisible] = useState(false)
   const {
     watch,
     control,
@@ -44,6 +51,8 @@ const EditProfile = ({ navigation }: Props) => {
     register('firstDay', { required: true })
   }, [register])
 
+  const toggleBirthModal = () => setBirthModalVisible((prev) => !prev)
+  const toggleFirstDayModal = () => setFirstDayModalVisible((prev) => !prev)
   const onPhotoBoxClick = async () => {
     Keyboard.dismiss()
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -64,6 +73,38 @@ const EditProfile = ({ navigation }: Props) => {
       navigation.goBack()
     } catch (e) {
       console.log('onValid err ', e)
+    }
+  }
+  const onBirthPress = () => {
+    if (Platform.OS === 'ios') {
+      toggleBirthModal()
+    }
+    if (Platform.OS === 'android') {
+      DateTimePickerAndroid.open({
+        value: watch('birth'),
+        onChange: onBirthChange,
+      })
+    }
+  }
+  const onFirstDayPress = () => {
+    if (Platform.OS === 'ios') {
+      toggleFirstDayModal()
+    }
+    if (Platform.OS === 'android') {
+      DateTimePickerAndroid.open({
+        value: watch('firstDay'),
+        onChange: onFirstDayChange,
+      })
+    }
+  }
+  const onBirthChange = (_: DateTimePickerEvent, selectedDate?: Date) => {
+    if (selectedDate) {
+      setValue('birth', selectedDate, { shouldValidate: true })
+    }
+  }
+  const onFirstDayChange = (_: DateTimePickerEvent, selectedDate?: Date) => {
+    if (selectedDate) {
+      setValue('firstDay', selectedDate, { shouldValidate: true })
     }
   }
 
@@ -89,7 +130,7 @@ const EditProfile = ({ navigation }: Props) => {
         />
       </InputBox>
       <Caption1 color={colors.black300}>생일</Caption1>
-      <InputBox>
+      <InputBox onPress={onBirthPress}>
         <Svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
           <Path
             d='M1.33334 12.6666C1.33334 13.8 2.20001 14.6666 3.33334 14.6666H12.6667C13.8 14.6666 14.6667 13.8 14.6667 12.6666V7.33331H1.33334V12.6666ZM12.6667 2.66665H11.3333V1.99998C11.3333 1.59998 11.0667 1.33331 10.6667 1.33331C10.2667 1.33331 10 1.59998 10 1.99998V2.66665H6.00001V1.99998C6.00001 1.59998 5.73334 1.33331 5.33334 1.33331C4.93334 1.33331 4.66668 1.59998 4.66668 1.99998V2.66665H3.33334C2.20001 2.66665 1.33334 3.53331 1.33334 4.66665V5.99998H14.6667V4.66665C14.6667 3.53331 13.8 2.66665 12.6667 2.66665Z'
@@ -101,7 +142,7 @@ const EditProfile = ({ navigation }: Props) => {
         </SubHeader>
       </InputBox>
       <Caption1 color={colors.black300}>사귀기 시작한 날</Caption1>
-      <InputBox>
+      <InputBox onPress={onFirstDayPress}>
         <Svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
           <Path
             d='M1.33334 12.6666C1.33334 13.8 2.20001 14.6666 3.33334 14.6666H12.6667C13.8 14.6666 14.6667 13.8 14.6667 12.6666V7.33331H1.33334V12.6666ZM12.6667 2.66665H11.3333V1.99998C11.3333 1.59998 11.0667 1.33331 10.6667 1.33331C10.2667 1.33331 10 1.59998 10 1.99998V2.66665H6.00001V1.99998C6.00001 1.59998 5.73334 1.33331 5.33334 1.33331C4.93334 1.33331 4.66668 1.59998 4.66668 1.99998V2.66665H3.33334C2.20001 2.66665 1.33334 3.53331 1.33334 4.66665V5.99998H14.6667V4.66665C14.6667 3.53331 13.8 2.66665 12.6667 2.66665Z'
@@ -112,6 +153,38 @@ const EditProfile = ({ navigation }: Props) => {
           {dayjs(watch('firstDay')).format('YYYY-MM-DD')}
         </SubHeader>
       </InputBox>
+      <ModalContainer
+        isVisible={birthModalVisible && Platform.OS === 'ios'}
+        onBackButtonPress={toggleBirthModal}
+        onBackdropPress={toggleBirthModal}
+      >
+        <ModalBox>
+          <DateTimePicker
+            testID='birth'
+            value={watch('birth')}
+            mode='date'
+            onChange={onBirthChange}
+            display='spinner'
+            textColor={colors.black900}
+          />
+        </ModalBox>
+      </ModalContainer>
+      <ModalContainer
+        isVisible={firstDayModalVisible && Platform.OS === 'ios'}
+        onBackButtonPress={toggleFirstDayModal}
+        onBackdropPress={toggleFirstDayModal}
+      >
+        <ModalBox>
+          <DateTimePicker
+            testID='firstDay'
+            value={watch('firstDay')}
+            mode='date'
+            onChange={onFirstDayChange}
+            display='spinner'
+            textColor={colors.black900}
+          />
+        </ModalBox>
+      </ModalContainer>
     </Container>
   )
 }
@@ -147,4 +220,15 @@ const Input = styled.TextInput`
   height: 100%;
   color: ${({ theme }) => theme.colors.black900};
   font-size: ${({ theme }) => theme.fontSizes.subHeader}px;
+`
+const ModalContainer = styled(Modal)`
+  margin: 0;
+  justify-content: flex-end;
+`
+const ModalBox = styled.View`
+  width: 100%;
+  padding: 16px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  background: ${({ theme }) => theme.colors.black0};
 `
