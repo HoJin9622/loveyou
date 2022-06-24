@@ -15,3 +15,5 @@ web-build/
 
 pc-api-8949926332313443778-639-a697ae7c26c6.json
 .env
+google-services.json
+GoogleService-Info.plist

@@ -18,7 +18,8 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "net.nextlevels.loveyou",
-      "buildNumber": "4"
+      "buildNumber": "4",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,11 +27,12 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "net.nextlevels.loveyou",
-      "versionCode": 4
+      "versionCode": 4,
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["sentry-expo"]
+    "plugins": ["sentry-expo", "@react-native-firebase/app"]
   }
 }
