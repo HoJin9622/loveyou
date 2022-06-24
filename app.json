@@ -2,7 +2,7 @@
   "expo": {
     "name": "러브유",
     "slug": "loveyou",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,7 +18,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "net.nextlevels.loveyou",
-      "buildNumber": "3"
+      "buildNumber": "4"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,18 +26,11 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "net.nextlevels.loveyou",
-      "versionCode": 3
+      "versionCode": 4
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
-        }
-      ]
-    ]
+    "plugins": ["sentry-expo"]
   }
 }
