@@ -1,7 +1,7 @@
 import { RootStackParamsList } from '@navigators/navigator'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect, useState } from 'react'
-import { Caption1, SubHeader } from '@components/typography'
+import { Body2, SubHeader } from '@components/typography'
 import styled, { useTheme } from 'styled-components/native'
 import { useRecoilState } from 'recoil'
 import { UserForm, userState } from '@utils/atom'
@@ -39,9 +39,9 @@ const EditProfile = ({ navigation }: Props) => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Caption1 onPress={handleSubmit(onValid)} opacity={isValid ? 1 : 0.5}>
+        <Body2 onPress={handleSubmit(onValid)} opacity={isValid ? 1 : 0.5}>
           완료
-        </Caption1>
+        </Body2>
       ),
     })
   }, [isValid])
@@ -113,7 +113,7 @@ const EditProfile = ({ navigation }: Props) => {
       <PhotoBox onPress={onPhotoBoxClick}>
         <Photo source={{ uri: watch('photo') }} />
       </PhotoBox>
-      <Caption1 color={colors.black300}>이름 or 애칭</Caption1>
+      <Body2 color={colors.black300}>이름 or 애칭</Body2>
       <InputBox disabled>
         <Controller
           control={control}
@@ -129,7 +129,7 @@ const EditProfile = ({ navigation }: Props) => {
           name='name'
         />
       </InputBox>
-      <Caption1 color={colors.black300}>생일</Caption1>
+      <Body2 color={colors.black300}>생일</Body2>
       <InputBox onPress={onBirthPress}>
         <Svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
           <Path
@@ -141,7 +141,7 @@ const EditProfile = ({ navigation }: Props) => {
           {dayjs(watch('birth')).format('YYYY-MM-DD')}
         </SubHeader>
       </InputBox>
-      <Caption1 color={colors.black300}>사귀기 시작한 날</Caption1>
+      <Body2 color={colors.black300}>사귀기 시작한 날</Body2>
       <InputBox onPress={onFirstDayPress}>
         <Svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
           <Path

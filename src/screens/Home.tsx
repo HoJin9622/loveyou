@@ -28,11 +28,12 @@ const Home = ({ navigation }: Props) => {
   }, [user])
 
   const goToEditProfile = () => navigation.navigate('EditProfile')
+  const goToAnniversaries = () => navigation.navigate('Anniversaries')
 
   return !user ? null : (
     <Container>
       <ImageBackground source={{ uri: user.photo }} style={{ flex: 1 }}>
-        <UserInfo bottomInset={bottom}>
+        <UserInfo bottomInset={bottom} onPress={goToAnniversaries}>
           <Title color={colors.black0} fontWeight={700} mb={4}>
             {user.name}
           </Title>
@@ -79,7 +80,7 @@ const Container = styled.View`
   flex: 1;
   background: ${({ theme }) => theme.colors.black800};
 `
-const UserInfo = styled.View<{ bottomInset: number }>`
+const UserInfo = styled.Pressable<{ bottomInset: number }>`
   width: 100%;
   padding: 24px 20px ${({ bottomInset }) => bottomInset + 24}px;
   background: rgba(0, 0, 0, 0.3);

@@ -35,6 +35,10 @@ export const Body1 = styled(Typography)`
   font-size: ${({ theme }) => theme.fontSizes.body1}px;
   line-height: ${({ theme }) => theme.lineHeights.body1}px;
 `
+export const Body2 = styled(Typography)`
+  font-size: ${({ theme }) => theme.fontSizes.body2}px;
+  line-height: ${({ theme }) => theme.lineHeights.body2}px;
+`
 export const Caption1 = styled(Typography)`
   font-size: ${({ theme }) => theme.fontSizes.caption1}px;
   line-height: ${({ theme }) => theme.lineHeights.caption1}px;

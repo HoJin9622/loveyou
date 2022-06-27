@@ -9,7 +9,7 @@ import { Entypo } from '@expo/vector-icons'
 import Row from '@components/layouts/Row'
 import * as ImagePicker from 'expo-image-picker'
 import { Controller, useForm } from 'react-hook-form'
-import { Caption1 } from '@components/typography'
+import { Body2 } from '@components/typography'
 import Svg, { Path } from 'react-native-svg'
 import Modal from 'react-native-modal'
 import TouchableRow from '@components/layouts/TouchableRow'
@@ -49,14 +49,14 @@ const Intro = ({ navigation }: Props) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Caption1
+        <Body2
           color={colors.black0}
           opacity={isValid ? 1 : 0.5}
           fontWeight={isValid ? 700 : 400}
           onPress={handleSubmit(onValid)}
         >
           완료
-        </Caption1>
+        </Body2>
       ),
     })
   }, [navigation, isValid])
@@ -134,10 +134,10 @@ const Intro = ({ navigation }: Props) => {
             ) : (
               <>
                 <Entypo name='plus' size={44} color={colors.black900} />
-                <Caption1 opacity={0.5} mt={48}>
+                <Body2 opacity={0.5} mt={48}>
                   여기를 터치해서
-                </Caption1>
-                <Caption1 opacity={0.5}>원하는 사진을 선택해주세요.</Caption1>
+                </Body2>
+                <Body2 opacity={0.5}>원하는 사진을 선택해주세요.</Body2>
               </>
             )}
           </PhotoBox>
@@ -162,11 +162,11 @@ const Intro = ({ navigation }: Props) => {
                   fill={colors.black0}
                 />
               </Svg>
-              <Caption1 color={colors.black0} ml={8} mr={24}>
+              <Body2 color={colors.black0} ml={8} mr={24}>
                 {watch('birth')
                   ? dayjs(watch('birth')).format('YYYY-MM-DD')
                   : '생일'}
-              </Caption1>
+              </Body2>
             </TouchableRow>
             <TouchableRow onPress={onFirstDayPress}>
               <Svg width='16' height='16' viewBox='0 0 16 16' fill='none'>
@@ -175,11 +175,11 @@ const Intro = ({ navigation }: Props) => {
                   fill={colors.black0}
                 />
               </Svg>
-              <Caption1 color={colors.black0} ml={8}>
+              <Body2 color={colors.black0} ml={8}>
                 {watch('firstDay')
                   ? dayjs(watch('firstDay')).format('YYYY-MM-DD')
                   : '사귀기 시작한 날'}
-              </Caption1>
+              </Body2>
             </TouchableRow>
           </Row>
           <ModalContainer

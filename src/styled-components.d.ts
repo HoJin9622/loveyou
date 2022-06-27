@@ -9,12 +9,14 @@ declare module 'styled-components' {
       black300: '#2d2f38'
       black200: '#ebebf0'
       black0: '#fff'
+      red500: '#EB5757'
     }
     fontSizes: {
       title: 32
       subHeader: 20
       body1: 18
-      caption1: 16
+      body2: 16
+      caption1: 14
       caption2: 12
       caption3: 10
     }
@@ -22,7 +24,8 @@ declare module 'styled-components' {
       title: 38
       subHeader: 24
       body1: 22
-      caption1: 19
+      body2: 19
+      caption1: 17
       caption2: 14
       caption3: 12
     }
