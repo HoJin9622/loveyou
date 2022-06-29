@@ -11,6 +11,7 @@ import { useState } from 'react'
 import EditProfile from '@screens/EditProfile'
 import { AntDesign } from '@expo/vector-icons'
 import styled from 'styled-components/native'
+import Anniversaries from '@screens/Anniversaries'
 
 const Stack = createNativeStackNavigator<RootStackParamsList>()
 
@@ -63,6 +64,11 @@ const RootStackNav = () => {
             </BackButton>
           ),
         })}
+      />
+      <Stack.Screen
+        name='Anniversaries'
+        component={Anniversaries}
+        options={{ presentation: 'transparentModal', headerShown: false }}
       />
     </Stack.Navigator>
   )
