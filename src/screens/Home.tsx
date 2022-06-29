@@ -40,7 +40,7 @@ const Home = ({ navigation }: Props) => {
           <Body1 color={colors.black0} mb={12}>
             in love{' '}
             <Body1 color={colors.black0} fontWeight={700}>
-              {getDifference(dayjs(user.firstDay)) + 1}
+              {getDifference(dayjs(user.firstDay))}
             </Body1>{' '}
             days
           </Body1>

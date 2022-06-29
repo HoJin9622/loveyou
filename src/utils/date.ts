@@ -1,7 +1,10 @@
 import dayjs from 'dayjs'
 
 export const getDifference = (date: dayjs.Dayjs) => {
-  return dayjs(new Date()).diff(date, 'd')
+  const now = dayjs(new Date())
+  return now.isAfter(date)
+    ? now.diff(date.add(-1, 'd'), 'd')
+    : now.diff(date.add(2, 'd'), 'd')
 }
 export const getComingDate = (firstDay: Date): [dayjs.Dayjs, number] => {
   const now = dayjs(new Date())
