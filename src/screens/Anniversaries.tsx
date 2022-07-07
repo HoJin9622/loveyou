@@ -20,7 +20,7 @@ const Anniversaries = ({ navigation }: Props) => {
   const [user] = useRecoilState(userState)
   const [maxLength, setMaxLength] = useState(10)
   const anniversaries = useMemo(
-    () => getAnniversaries(user?.firstDay!, maxLength),
+    () => getAnniversaries(user?.firstDay!, user?.birth!, maxLength),
     [user, maxLength]
   )
   const goBack = () => navigation.goBack()
