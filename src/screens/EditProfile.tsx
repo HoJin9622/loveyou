@@ -166,6 +166,7 @@ const EditProfile = ({ navigation }: Props) => {
             onChange={onBirthChange}
             display='spinner'
             textColor={colors.black900}
+            maximumDate={new Date()}
           />
         </ModalBox>
       </ModalContainer>
@@ -182,6 +183,7 @@ const EditProfile = ({ navigation }: Props) => {
             onChange={onFirstDayChange}
             display='spinner'
             textColor={colors.black900}
+            maximumDate={new Date()}
           />
         </ModalBox>
       </ModalContainer>
