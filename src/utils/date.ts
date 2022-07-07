@@ -21,21 +21,40 @@ export const getComingDate = (firstDay: Date): [dayjs.Dayjs, number] => {
   return [newDay, day + 1]
 }
 export const getAnniversaries = (firstDay: Date, maxLength: number) => {
-  const now = dayjs(new Date())
   let anniversaries = []
+  const now = dayjs(new Date())
   const day50 = dayjs(firstDay).add(49, 'd')
-  let setComingUp = day50.isAfter(now)
-  anniversaries.push({ date: day50, comingUp: setComingUp })
+  anniversaries.push({
+    date: day50,
+    comingUp: false,
+    text: '50-day anniversary',
+  })
   for (let i = 1; i < maxLength; i++) {
     const anniversary = dayjs(firstDay)
       .add(i * 100, 'd')
       .add(-1, 'd')
-    if (!setComingUp) {
-      setComingUp = dayjs(anniversary).isAfter(now)
-      anniversaries.push({ date: anniversary, comingUp: setComingUp })
-    } else {
-      anniversaries.push({ date: anniversary, comingUp: false })
-    }
+    anniversaries.push({
+      date: anniversary,
+      comingUp: false,
+      text: `${i * 100}-day anniversary`,
+    })
   }
-  return anniversaries
+  const year = Math.floor(
+    anniversaries[anniversaries.length - 1].date
+      .add(1, 'd')
+      .diff(dayjs(firstDay), 'd') / 365
+  )
+  for (let i = 1; i <= year; i++) {
+    const anniversary = dayjs(firstDay).add(i, 'y')
+    anniversaries.push({
+      date: anniversary,
+      comingUp: false,
+      text: `${i}st anniversary`,
+    })
+  }
+  const index = anniversaries.findIndex((anniversary) =>
+    anniversary.date.isAfter(now)
+  )
+  anniversaries[index].comingUp = true
+  return anniversaries.sort((a, b) => (a.date.isAfter(b.date) ? 1 : -1))
 }

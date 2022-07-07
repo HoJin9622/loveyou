@@ -28,6 +28,7 @@ const Anniversaries = ({ navigation }: Props) => {
     | ListRenderItem<{
         date: dayjs.Dayjs
         comingUp: boolean
+        text: string
       }>
     | null
     | undefined = ({ item, index }) => {
@@ -43,7 +44,7 @@ const Anniversaries = ({ navigation }: Props) => {
         )}
         <BetweenRow>
           <Body1 fontWeight={700} color={colors.black0}>
-            {index * 100 || 50}-day anniversary
+            {item.text}
           </Body1>
           <Body1 color={colors.black0} fontWeight={700}>
             D
