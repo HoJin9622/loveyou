@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 
 const now = dayjs(new Date())
 
+const numberPrefix = (i: number) => (i === 1 ? 'st' : i === 2 ? 'nd' : 'th')
 export const getDifference = (date: dayjs.Dayjs) => {
   return now.isAfter(date)
     ? now.diff(date.add(-1, 'd'), 'd')
@@ -53,12 +54,12 @@ export const getAnniversaries = (
     anniversaries.push({
       date: anniversary,
       comingUp: false,
-      text: `${i}st anniversary`,
+      text: `${i}${numberPrefix(i)} anniversary`,
     })
     anniversaries.push({
       date: birthday,
       comingUp: false,
-      text: `${birthYear + i + 1}th birthday`,
+      text: `${birthYear + i + 1}${numberPrefix(birthYear + i)} birthday`,
     })
   }
   const index = anniversaries.findIndex((anniversary) =>
